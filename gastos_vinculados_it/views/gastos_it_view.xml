@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_gastos_vinculados_it_form" model="ir.ui.view">
+            <field name="name">gastos.vinculados.it.form</field>
+            <field name="model">gastos.vinculados.it</field>
+            <field name="arch" type="xml">
+                <form string="Gastos Vinculados">
+                    <header>
+                        <button string="Procesar" type="object" name="procesar" states="draft" class="oe_highlight"/>
+                        <button string="Volver Borrador" type="object" name="borrador" states="done" class="oe_highlight"/>
+                        <button string="Agregar Lineas" type="object" name="agregar_lineas" states="draft" />
+                        <button string="Calcular" type="object" name="calcular" states="draft" />
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
+                    <group class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="partner_id" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="date_invoice" readonly="1" />
+                            <field name="invoice_id" required="0" attrs="{'readonly':[('state','=','done')]}" domain="[('partner_id','=',partner_id),('type','=','in_invoice')]" />
+                            <field name="amount_invoice" readonly="1" widget="monetary"/>
+                            <field name="tomar_valor" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="prorratear_en" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                        <group>
+                            <field name="date_purchase" readonly="1" />
+                            <!-- <field name="partner_almacen_id" attrs="{'readonly':[('state','=','done')]}"/> -->
+                            <field name="purchase_order_id" required="0" attrs="{'readonly':[('state','=','done')]}" domain="[('partner_id','=',partner_id)]"/>
+                            <field name="amount_purchase" widget="monetary"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle">
+                            <field name="detalle_ids" attrs="{'readonly':[('state','=','done')]}">
+                                <tree editable="bottom">
+                                    <field name="stock_move_id" invisible="1"/>
+                                    <field name="picking_rel" readonly="1"/>
+                                    <field name="origen_rel" readonly="1"/>
+                                    <field name="destino_rel" readonly="1"/>
+                                    <field name="producto_rel" readonly="1"/>
+                                    <field name="unidad_rel" readonly="1"/>
+                                    <field name="cantidad_rel" readonly="1"/>
+                                    <field name="precio_unitario_rel" readonly="1"/>
+                                    <field name="valor_rel" readonly="1"/>
+                                    <field name="factor" required="1"/>
+                                    <field name="flete" required="1"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <field name="total_flete" sum="Total Flete" readonly="1"/>
+                                <field name="tipo_moneda_cambio" readonly="1"/>
+                                <field name="total_factor" sum="Total Factor" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Ingresos de almacen">
+
+                            <field name="picking_ids" attrs="{'readonly':[('state','=','done')]}">
+                                <tree editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record id="view_gastos_vinculados_it_tree" model="ir.ui.view">
+            <field name="name">gastos.vinculados.it.tree</field>
+            <field name="model">gastos.vinculados.it</field>
+            <field name="arch" type="xml">
+                <tree string="Gastos Vinculados">
+                    <field name="name" />
+                    <field name="partner_id" />
+                    <field name="date_invoice" />
+                    <field name="invoice_id" />
+                    <field name="amount_invoice" />
+                    <field name="date_purchase" />
+                    <field name="purchase_order_id" />
+                    <field name="amount_purchase" />
+                    <field name="tomar_valor" />
+                    <field name="prorratear_en" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="action_gastos_vinculados_it" model="ir.actions.act_window">
+            <field name="name">Gastos Vinculados</field>
+            <field name="res_model">gastos.vinculados.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--menuitem id="menu_gastos_vinculados_general" name="Gastos Vinculados"/>
+        <menuitem id="menu_gastos_vinculados_general_label" name="Gastos Vinculados" parent="gastos_vinculados_it.menu_gastos_vinculados_general"/-->
+        <!-- <menuitem id="menu_gastos_vinculados" name="Nuevo Gastos Vinculados" parent="account.menu_finance_payables" action="action_gastos_vinculados_it" sequence="3"/> -->
+
+        <!-- sobreescribiendo meny del kardex -->
+        <menuitem action="action_gastos_vinculados_it" id="kardex_it.menu_gastos_vinculados_distribucion_form" parent="account.menu_finance_payables" sequence="1"/>
+
+    </data>
+</openerp>

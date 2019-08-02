@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+	<record model="ir.module.category" id="precio_unitario_categoria">
+            <field name="name">Precio Unitario Stock Picking</field>
+            <field name="description">....</field>
+    	</record>
+    	
+    	<record id="precio_unitario_sp_admin_group" model="res.groups"> 
+            <field name="name">Admin Precio Unitario Stock Picking</field>
+            <field name="category_id" ref="precio_unitario_categoria"/>
+        </record>
+    	
+    	<record id="precio_unitario_sp_usuario_group" model="res.groups"> 
+            <field name="name">Usuario Precio Unitario Stock Picking</field>
+            <field name="category_id" ref="precio_unitario_categoria"/>
+        </record>
+
+    </data>
+</odoo>
+	

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+
+<!--        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="after">
+                    <field name="check_disponibilidad" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('check_disponibilidad','=',True)]}">
+                        <bold> No dispone de saldo para: </bold> <br/>
+                        <field name="info_disponibilidad" nolabel="1" readonly="1"/>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+-->
+
+        <record id="view_picking_internal_search" model="ir.ui.view">
+            <field name="name">stock.picking.internal.search</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="inside">
+                    <filter string="Almacen Destino" domain="[]" context="{'group_by':'location_dest_id'}" />
+                </xpath>
+
+            </field>
+        </record>
+
+
+	</data>
+</openerp>

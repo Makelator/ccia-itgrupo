@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Transito" >
+                        <group>
+                            <group>
+                                <field name="usar_ruta" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+                
+
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="view_picking_recepcion_ruta_form">
+            <field name="name">picking.recepcion.ruta.form</field>
+            <field name="model">picking.recepcion.ruta</field>
+            <field name="arch" type="xml">
+                <form string="Facturas Pagadas" version="8.0">
+                    <group>
+                        <group>
+                            <field name="date" required="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button string="Registrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+    <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">new_view_picking</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+               <field name="client_order_ref" position="after">
+                    <field name="visible_ruta" invisible="1"/>
+                    <field name="en_ruta" readonly="1"  attrs="{'invisible':[('visible_ruta','=',False)]}" />
+               </field>
+
+
+                <xpath expr="//header/button[@name='action_assign']" position="after">
+                    <button name="recepcionar_ruta" string="Recepcionar Transito" type="object" class="oe_highlight"  attrs="{'invisible':[('visible_ruta','=',False)]}" />
+                </xpath>
+
+      <xpath expr="//notebook" position="inside">
+        <page string="Recepción Transito" attrs="{'invisible':[('visible_ruta','=',False)]}">
+            <group>                
+                <group>
+                    <field name="usuario_recepcion" />
+                    <field name="fecha_recepcion" />
+                    <field name="fecha_recepcion_registro" />
+                </group>
+                <group>
+                </group>
+            </group>
+        </page>
+      </xpath>
+
+
+
+            </field>
+        </record>
+
+
+
+
+        <record id="pickings_en_ruta_action" model="ir.actions.server">
+            <field name="name">Ruta</field>
+            <field name="model_id" ref="model_movimientos_en_ruta"/>
+            <field name="code">              
+                    action = model.get_en_ruta()
+            </field>
+        </record>
+
+        <menuitem name="Movimientos en Transito"
+            action="pickings_en_ruta_action"
+            id="menu_en_ruta_veremos"
+            parent="stock.menu_stock_root"
+            sequence="13"
+        />
+
+
+        
+</odoo>

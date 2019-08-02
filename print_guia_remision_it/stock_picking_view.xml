@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <record id="vpicktree" model="ir.ui.view">
+        <field name="name">stock.picking.tree</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <field name="backorder_id" position="after">
+                <field name="numberg" />
+				
+            </field>
+        </field>
+    </record>
+
+
+    <record id="view_picking_internal_search" model="ir.ui.view">
+        <field name="name">stock.picking.internal.search</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="numberg" string="# Guía"/>
+				<field name="client_order_ref"/>
+            </field>
+			
+			
+        </field>
+    </record>
+
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="priority" eval="1"/>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="serie_guia"/>
+                <field name="campo_temp" invisible="1"></field>
+                <div class="oe_inline">
+                    <label for="numberg" string="# Guía de remision"/>
+                    <button name="refres_numg" states="draft,waiting,confirmed,assigned" string="Actualizar" type="object" class="oe_link" 
+                        attrs="{'invisible':[('campo_temp','=',False)]}"/>
+                </div>
+                <field name="numberg" nolabel="1"/>
+				<field name="client_order_ref"/>
+            </field>
+        </field>
+    </record>
+
+     <record id="view_picking_type_form" model="ir.ui.view">
+        <field name="name">Operation Types</field>
+        <field name="model">stock.picking.type</field>
+        <field name="priority" eval="1"/>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode_nomenclature_id']" position="after">
+                <field name="seria_guia"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

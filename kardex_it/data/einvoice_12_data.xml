@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- TIPO DE OPERACIÓN -->
+
+        <record id="einvoice12_01" model="einvoice.catalog.12">
+            <field name="name">VENTA</field>
+            <field name="code">01</field>
+        </record>
+
+        <record id="einvoice12_02" model="einvoice.catalog.12">
+            <field name="name">COMPRA</field>
+            <field name="code">02</field>
+        </record>
+
+        <record id="einvoice12_03" model="einvoice.catalog.12">
+            <field name="name">CONSIGNACIÓN RECIBIDA</field>
+            <field name="code">03</field>
+        </record>
+
+        <record id="einvoice12_04" model="einvoice.catalog.12">
+            <field name="name">CONSIGNACIÓN ENTREGADA</field>
+            <field name="code">04</field>
+        </record>
+
+        <record id="einvoice12_05" model="einvoice.catalog.12">
+            <field name="name">DEVOLUCIÓN RECIBIDA</field>
+            <field name="code">05</field>
+        </record>
+
+        <record id="einvoice12_06" model="einvoice.catalog.12">
+            <field name="name">DEVOLUCIÓN ENTREGADA</field>
+            <field name="code">06</field>
+        </record>
+
+        <record id="einvoice12_07" model="einvoice.catalog.12">
+            <field name="name">PROMOCIÓN</field>
+            <field name="code">07</field>
+        </record>
+
+        <record id="einvoice12_08" model="einvoice.catalog.12">
+            <field name="name">PREMIO</field>
+            <field name="code">08</field>
+        </record>
+
+        <record id="einvoice12_09" model="einvoice.catalog.12">
+            <field name="name">DONACIÓN</field>
+            <field name="code">09</field>
+        </record>
+
+        <record id="einvoice12_10" model="einvoice.catalog.12">
+            <field name="name">SALIDA A PRODUCCIÓN</field>
+            <field name="code">10</field>
+        </record>
+
+        <record id="einvoice12_11" model="einvoice.catalog.12">
+            <field name="name">TRANSFERENCIA ENTRE ALMACENES</field>
+            <field name="code">11</field>
+        </record>
+
+        <record id="einvoice12_12" model="einvoice.catalog.12">
+            <field name="name">RETIRO</field>
+            <field name="code">12</field>
+        </record>
+
+        <record id="einvoice12_13" model="einvoice.catalog.12">
+            <field name="name">MERMAS</field>
+            <field name="code">13</field>
+        </record>
+
+        <record id="einvoice12_14" model="einvoice.catalog.12">
+            <field name="name">DESMEDROS</field>
+            <field name="code">14</field>
+        </record>
+
+        <record id="einvoice12_15" model="einvoice.catalog.12">
+            <field name="name">DESTRUCCIÓN</field>
+            <field name="code">15</field>
+        </record>
+
+        <record id="einvoice12_16" model="einvoice.catalog.12">
+            <field name="name">SALDO INICIAL</field>
+            <field name="code">16</field>
+        </record>
+
+        <record id="einvoice12_99" model="einvoice.catalog.12">
+            <field name="name">OTROS (ESPECIFICAR)</field>
+            <field name="code">99</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_aprobacion_precesos">
+            <field name="name">Aprobacion  de procesos</field>
+            <field name="description">Aprobacion  de procesos</field>
+            <field name="sequence">10</field>
+        </record>
+    </data>
+    <data>
+        <record id="group_aprobacion_devolucion_compra" model="res.groups">
+            <field name="name">Aprobacion de devolucion  de stock compra</field>
+            <field name="category_id" ref="module_category_aprobacion_precesos"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+    <data>
+        <record id="group_aprobacion_devolucion_venta" model="res.groups">
+            <field name="name">Aprobacion de devolucion  de stock venta</field>
+            <field name="category_id" ref="module_category_aprobacion_precesos"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

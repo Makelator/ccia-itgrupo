@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+
+
+        <menuitem
+            id="account.account_analytic_tag_menu"
+            name="Etiquetas de Cuentas Analiticas"
+            parent="account.menu_analytic_accounting"
+            action="analytic.account_analytic_tag_action"
+            groups=""/>
+
+
+
+
+  </data>
+</odoo>

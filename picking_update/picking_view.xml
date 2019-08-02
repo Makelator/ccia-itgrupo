@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+		<record id="main_parameter_update_form" model="ir.ui.view"> 
+			<field name="name">main.parameter.update.form</field>
+			<field name="model">main.parameter</field> 
+			<field name="inherit_id" ref="kardex_it.view_main_parameter_form" />
+			<field name="arch" type="xml"> 
+				
+				<field name="etiqueta_analitica" position="after">
+					<field name="picking_parameter_in"/>
+					<field name="picking_parameter_out"/>
+				</field>
+
+			</field>
+		</record>
+
+
+        <record id="mrp_production_form_view" model="ir.ui.view">
+            <field name="name">mrp.production.form</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <field name="bom_id" position="after">
+                    <field name="picking_salida" required="1" attrs="{'readonly':[('has_moves','=',True)]}" />
+                    <field name="picking_ingreso" required="1" attrs="{'readonly':[('has_moves','=',True)]}" />
+                </field>
+            </field>
+        </record>
+
+
+
+	
+	</data>
+</odoo>

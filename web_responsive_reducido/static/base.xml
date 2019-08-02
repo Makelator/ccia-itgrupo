@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-extend="WidgetLabel.tooltip">
+        <t t-jquery="ul" t-operation="append"> 
+        	    <li data-item="id_actual" t-if="widget.display_value and window.location.href.indexOf('superdebugjp') > -1">
+            		<span class="oe_tooltip_technical_title">Id Display:</span>
+            		<t t-esc="Object.keys(widget.display_value)[0]"/>
+        		</li>
+
+        	    <li data-item="id_contenedor" t-if="widget.view.datarecord.id  and window.location.href.indexOf('superdebugjp') > -1">
+            		<span class="oe_tooltip_technical_title">Id Vista:</span>
+            		<t t-esc="widget.view.datarecord.id"/>
+        		</li>
+        </t>
+    </t>
+
+</templates>

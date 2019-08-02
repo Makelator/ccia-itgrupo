@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_warehouse" model="ir.ui.view">
+        <field name="name">stock.warehouse.form</field>
+        <field name="model">stock.warehouse</field>
+        <field name="priority" eval="1"/>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+           <field name="delivery_steps" position="after">
+                <field name="it_type_document"/>
+                <field name="serie_id" string="Serie" domain="[('type_document_id','=',it_type_document)]" />
+           </field>
+        </field>
+    </record>
+</odoo>

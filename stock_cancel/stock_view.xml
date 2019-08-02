@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <button name="%(stock.act_stock_return_picking)d" position="after">
+                    <button name="action_revert_done" string="Reopen" states="done,cancel" type="object" confirm="Are you sure you want to reopen this stock picking?" groups="stock_cancel.inventario_reabrir_albaranes"/>
+                    <button name="anular_alvaran" string="Anular" states="done" type="object" confirm="Usted esta seguro de anular este alvaran?" groups="stock_cancel.inventario_anular_albaranes"/>
+                </button>
+            </field>
+		</record>
+    </data>
+</openerp>

@@ -1,0 +1,510 @@
+-- View: vst_invoice_line_final
+
+-- DROP VIEW vst_invoice_line_final;
+
+CREATE OR REPLACE VIEW vst_invoice_line_final AS 
+ SELECT sum(account_move_line.debit) / sum(
+        CASE
+            WHEN account_move_line.quantity IS NULL OR account_move_line.quantity = 0::numeric THEN 1::numeric
+            ELSE account_move_line.quantity
+        END) AS price_unit, 
+    account_move_line.product_id, account_invoice.id AS invoice_id, 
+    max(account_move_line.account_id) AS account_id
+   FROM account_move_line
+   JOIN account_move ON account_move_line.move_id = account_move.id
+   JOIN account_invoice ON account_move.id = account_invoice.move_id
+   JOIN product_product pp ON pp.id = account_move_line.product_id
+   JOIN product_template pt ON pt.id = pp.product_tmpl_id
+  WHERE account_move_line.quantity IS NOT NULL AND account_move_line.product_id IS NOT NULL AND pt.type::text = 'product'::text AND account_move_line.debit <> 0::numeric
+  GROUP BY account_move_line.product_id, account_invoice.id
+  ORDER BY account_invoice.id, account_move_line.product_id;
+
+
+
+
+
+-- View: vst_kardex_credit_final
+
+-- DROP VIEW vst_kardex_credit_final;
+
+CREATE OR REPLACE VIEW vst_kardex_credit_final AS 
+        (         SELECT DISTINCT stock_location.complete_name, 
+                    product_category.name AS categoria, 
+                    product_product.name_template, account_move.date, 
+                    account_period.name AS getperiod, 
+                    ''::character varying AS ctanalitica, 
+                    getserial(account_invoice.supplier_invoice_number) AS serial, 
+                    getnumber(account_invoice.supplier_invoice_number)::character varying(10) AS getnumber, 
+                    ''::character varying AS operation_type, res_partner.name, 
+                    0 AS ingreso, 0 AS salida, 
+                        CASE
+                            WHEN product_uom.id <> uomt.id THEN round((account_move_line.debit::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 2)
+                            ELSE account_move_line.debit
+                        END AS debit, 
+                        CASE
+                            WHEN product_uom.id <> uomt.id THEN round((account_move_line.credit::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 2)
+                            ELSE account_move_line.credit
+                        END AS credit, 
+                        CASE
+                            WHEN account_move_line.debit > 0::numeric THEN 'ingreso'::text
+                            ELSE 'salida'::text
+                        END AS esingreso, 
+                    account_move_line.product_id, 
+                    stock_location.id AS location_id, 
+                    lpad(account_invoice.type_document_id::text, 2, '0'::text) AS doc_type_ope, 
+                    account_account.id AS account_id, 
+                    account_account.code AS account_invoice, 
+                    it_type_document.code::text AS type_doc, 
+                    COALESCE(account_invoice.supplier_invoice_number, ''::character varying) AS numdoc_cuadre, 
+                    res_partner.type_number, 
+                    account_invoice_line.id AS invoicelineid
+                   FROM account_invoice_line
+              JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
+         JOIN product_uom ON account_invoice_line.uos_id = product_uom.id
+    LEFT JOIN it_type_document ON account_invoice.type_document_id = it_type_document.id
+   JOIN account_move ON account_invoice.move_id = account_move.id
+   JOIN account_move_line ON account_move.id = account_move_line.move_id AND account_move_line.product_id = account_invoice_line.product_id
+   JOIN account_account ON account_move_line.account_id = account_account.id
+   JOIN res_partner ON account_invoice.partner_id = res_partner.id
+   JOIN product_product ON account_move_line.product_id = product_product.id
+   JOIN product_template ON product_product.product_tmpl_id = product_template.id
+   JOIN product_uom uomt ON product_template.uom_id = uomt.id
+   JOIN product_category ON product_template.categ_id = product_category.id
+   JOIN stock_location ON account_invoice_line.location_id = stock_location.id
+   JOIN account_period ON account_move.period_id = account_period.id
+   JOIN account_journal ON account_move_line.journal_id = account_journal.id
+   LEFT JOIN stock_picking sp ON sp.invoice_id = account_invoice.id
+   LEFT JOIN stock_move sm ON sm.picking_id = sp.id AND sm.product_id = product_product.id
+  WHERE account_invoice.is_fixer = true
+        UNION ALL 
+                 SELECT DISTINCT stock_location.complete_name, 
+                    product_category.name AS categoria, 
+                    product_product.name_template, account_move.date, 
+                    account_period.name AS getperiod, 
+                    ''::character varying AS ctanalitica, 
+                    getserial(account_invoice.supplier_invoice_number) AS serial, 
+                    getnumber(account_invoice.supplier_invoice_number)::character varying(10) AS getnumber, 
+                    ''::character varying AS operation_type, res_partner.name, 
+                    0 AS ingreso, 
+                        CASE
+                            WHEN product_uom.id <> uomt.id THEN round((sm.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6)
+                            ELSE sm.product_uom_qty
+                        END AS salida, 
+                    0 AS debit, 
+                        CASE
+                            WHEN product_uom.id <> uomt.id THEN (round((sm.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6) * round((sm.price_unit::double precision * product_uom.factor::double precision / uomt.factor::double precision)::numeric, 6))::double precision
+                            ELSE sm.price_unit::double precision * sm.product_uom_qty::double precision
+                        END AS credit, 
+                    'ingreso'::text AS esingreso, account_move_line.product_id, 
+                    stock_location.id AS location_id, 
+                    lpad(account_invoice.type_document_id::text, 2, '0'::text) AS doc_type_ope, 
+                    account_account.id AS account_id, 
+                    account_account.code AS account_invoice, 
+                    it_type_document.code::text AS type_doc, 
+                    COALESCE(account_invoice.supplier_invoice_number, ''::character varying) AS numdoc_cuadre, 
+                    res_partner.type_number, 0 AS invoicelineid
+                   FROM account_invoice_line
+              JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
+         JOIN product_uom ON account_invoice_line.uos_id = product_uom.id
+    LEFT JOIN it_type_document ON account_invoice.type_document_id = it_type_document.id
+   JOIN account_move ON account_invoice.move_id = account_move.id
+   JOIN account_move_line ON account_move.id = account_move_line.move_id AND account_move_line.product_id = account_invoice_line.product_id
+   JOIN account_account ON account_move_line.account_id = account_account.id
+   JOIN res_partner ON account_invoice.partner_id = res_partner.id
+   JOIN product_product ON account_move_line.product_id = product_product.id
+   JOIN product_template ON product_product.product_tmpl_id = product_template.id
+   JOIN product_category ON product_template.categ_id = product_category.id
+   JOIN product_uom uomt ON uomt.id = 
+CASE
+WHEN product_template.unidad_kardex IS NOT NULL THEN product_template.unidad_kardex
+ELSE product_template.uom_id
+END
+   JOIN account_period ON account_move.period_id = account_period.id
+   JOIN account_journal ON account_move_line.journal_id = account_journal.id
+   JOIN stock_picking sp ON sp.invoice_id = account_invoice.id
+   JOIN stock_move sm ON sm.picking_id = sp.id AND sm.product_id = product_product.id
+   LEFT JOIN stock_location ON account_invoice_line.location_id = stock_location.id
+  WHERE account_invoice.is_fixer <> true AND account_invoice.type::text = 'in_refund'::text)
+UNION ALL 
+         SELECT DISTINCT stock_location.complete_name, 
+            product_category.name AS categoria, product_product.name_template, 
+            account_move.date, account_period.name AS getperiod, 
+            ''::character varying AS ctanalitica, 
+            getserial(account_invoice.supplier_invoice_number) AS serial, 
+            getnumber(account_invoice.supplier_invoice_number)::character varying(10) AS getnumber, 
+            ''::character varying AS operation_type, res_partner.name, 
+                CASE
+                    WHEN product_uom.id <> uomt.id THEN round((sm.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6)
+                    ELSE sm.product_uom_qty
+                END AS ingreso, 
+            0 AS salida, 
+                CASE
+                    WHEN product_uom.id <> uomt.id THEN (round((sm.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6) * round((sm.price_unit::double precision * product_uom.factor::double precision / uomt.factor::double precision)::numeric, 6))::double precision
+                    ELSE sm.price_unit::double precision * sm.product_uom_qty::double precision
+                END AS debit, 
+            0 AS credit, 'salida'::text AS esingreso, 
+            account_move_line.product_id, stock_location.id AS location_id, 
+            lpad(account_invoice.type_document_id::text, 2, '0'::text) AS doc_type_ope, 
+            account_account.id AS account_id, 
+            account_account.code AS account_invoice, 
+            it_type_document.code::text AS type_doc, 
+            COALESCE(account_invoice.supplier_invoice_number, ''::character varying) AS numdoc_cuadre, 
+            res_partner.type_number, 0 AS invoicelineid
+           FROM account_invoice_line
+      JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
+   JOIN product_uom ON account_invoice_line.uos_id = product_uom.id
+   LEFT JOIN it_type_document ON account_invoice.type_document_id = it_type_document.id
+   JOIN account_move ON account_invoice.move_id = account_move.id
+   JOIN account_move_line ON account_move.id = account_move_line.move_id AND account_move_line.product_id = account_invoice_line.product_id
+   JOIN account_account ON account_move_line.account_id = account_account.id
+   JOIN res_partner ON account_invoice.partner_id = res_partner.id
+   JOIN product_product ON account_move_line.product_id = product_product.id
+   JOIN product_template ON product_product.product_tmpl_id = product_template.id
+   JOIN product_category ON product_template.categ_id = product_category.id
+   JOIN product_uom uomt ON uomt.id = 
+CASE
+WHEN product_template.unidad_kardex IS NOT NULL THEN product_template.unidad_kardex
+ELSE product_template.uom_id
+END
+   JOIN account_period ON account_move.period_id = account_period.id
+   JOIN account_journal ON account_move_line.journal_id = account_journal.id
+   JOIN stock_picking sp ON sp.invoice_id = account_invoice.id
+   JOIN stock_move sm ON sm.picking_id = sp.id AND sm.product_id = product_product.id
+   LEFT JOIN stock_location ON account_invoice_line.location_id = stock_location.id
+  WHERE account_invoice.is_fixer <> true AND account_invoice.type::text = 'in_invoice'::text;
+
+ALTER TABLE vst_kardex_credit_final
+  OWNER TO openpg;
+
+
+
+
+-- View: vst_stock_move_final
+
+-- DROP VIEW vst_stock_move_final;
+
+CREATE OR REPLACE VIEW vst_stock_move_final AS 
+ SELECT stock_move.product_uom, stock_move.move_dest_id, 
+        CASE
+            WHEN sl.usage::text = 'supplier'::text THEN 0::double precision
+            ELSE 
+            CASE
+                WHEN stock_picking_type.code::text = 'internal'::text THEN 
+                CASE
+                    WHEN product_uom.id <> uomt.id THEN round((stock_move.precio_unitario_manual * product_uom.factor::double precision / uomt.factor::double precision)::numeric, 6)::double precision
+                    ELSE stock_move.precio_unitario_manual
+                END
+                ELSE 
+                CASE
+                    WHEN product_uom.id <> uomt.id THEN round((stock_move.price_unit::double precision * product_uom.factor::double precision / uomt.factor::double precision)::numeric, 6)::double precision
+                    ELSE stock_move.price_unit::double precision
+                END
+            END
+        END AS price_unit, 
+        CASE
+            WHEN product_uom.id <> uomt.id THEN round((stock_move.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6)
+            ELSE stock_move.product_uom_qty
+        END AS product_uom_qty, 
+        CASE
+            WHEN product_uom.id <> uomt.id THEN round((stock_move.product_uom_qty::double precision * uomt.factor::double precision / product_uom.factor::double precision)::numeric, 6)
+            ELSE stock_move.product_uom_qty
+        END AS product_qty, 
+    stock_move.product_uos, stock_move.location_id, stock_move.picking_type_id, 
+    stock_move.state, stock_move.product_id, stock_move.picking_id, 
+    stock_move.location_dest_id, 
+    COALESCE(stock_picking.invoice_id, 0) AS invoice_id, 
+        CASE
+            WHEN stock_picking.use_date THEN stock_picking.date
+            ELSE 
+            CASE
+                WHEN ai.date_invoice IS NULL THEN stock_picking.date
+                ELSE ai.date_invoice::timestamp without time zone
+            END
+        END AS date, 
+    stock_picking.name, stock_picking.partner_id, stock_picking.motivo_guia, 
+    stock_move.analitic_id, stock_move.id, product_product.default_code, 
+        CASE
+            WHEN stock_move.raw_material_production_id IS NOT NULL THEN mrp1.name
+            ELSE 
+            CASE
+                WHEN stock_move.production_id IS NOT NULL THEN mrp2.name
+                ELSE ''::character varying
+            END
+        END AS mrpname
+   FROM stock_move
+   JOIN product_uom ON stock_move.product_uom = product_uom.id
+   JOIN stock_picking ON stock_move.picking_id = stock_picking.id
+   JOIN stock_picking_type ON stock_picking.picking_type_id = stock_picking_type.id
+   JOIN stock_location sl ON sl.id = stock_move.location_id
+   JOIN product_product ON stock_move.product_id = product_product.id
+   JOIN product_template ON product_product.product_tmpl_id = product_template.id
+   JOIN product_uom uomt ON uomt.id = 
+CASE
+WHEN product_template.unidad_kardex IS NOT NULL THEN product_template.unidad_kardex
+ELSE product_template.uom_id
+END
+   LEFT JOIN mrp_production mrp1 ON stock_move.raw_material_production_id = mrp1.id
+   LEFT JOIN mrp_production mrp2 ON stock_move.production_id = mrp2.id
+   LEFT JOIN account_invoice ai ON ai.id = stock_picking.invoice_id
+  WHERE stock_move.state::text = 'done'::text AND product_template.type::text = 'product'::text AND stock_move.picking_id IS NOT NULL;
+
+ALTER TABLE vst_stock_move_final
+  OWNER TO openpg;
+
+
+
+
+-- View: vst_kardex_fis_1_final
+
+-- DROP VIEW vst_kardex_fis_1_final;
+
+CREATE OR REPLACE VIEW vst_kardex_fis_1_final AS 
+ SELECT k.origen, k.destino, k.serial, k.nro, k.cantidad, k.ingreso, k.producto, 
+    k.fecha, k.id_origen, k.id_destino, k.product_id, k.id, k.categoria, k.name, 
+    k.unidad, k.default_code, k.cadquiere, k.currency_rate, k.price_unit, 
+    k.invoice_id, k.periodo, k.ctanalitica, k.operation_type, k.doc_type_ope, 
+    k.account_invoice, k.category_id, 
+    (aa_cp.code::text || ' - '::text) || aa_cp.name::text AS product_account, 
+    k.id_origen AS ubicacion_origen, k.id_destino AS ubicacion_destino, 
+    k.id AS stock_moveid, k.mrpname, k.stock_doc, k.price_stock_move, 
+    k.type_doc, k.numdoc_cuadre, k.type_number AS doc_partner
+   FROM ( SELECT origen.complete_name AS origen, 
+            destino.complete_name AS destino, 
+            getserial(account_invoice.supplier_invoice_number) AS serial, 
+                CASE
+                    WHEN vst_stock_move.invoice_id <> 0 THEN getnumber(account_invoice.supplier_invoice_number)::character varying(10)
+                    ELSE vst_stock_move.name
+                END AS nro, 
+            vst_stock_move.product_qty AS cantidad, 
+            vst_stock_move.product_qty AS ingreso, 
+            product_product.name_template AS producto, 
+            vst_stock_move.date AS fecha, 
+            vst_stock_move.location_id AS id_origen, 
+            vst_stock_move.location_dest_id AS id_destino, 
+            vst_stock_move.product_id, vst_stock_move.id, 
+            product_category.name AS categoria, 
+                CASE
+                    WHEN vst_stock_move.invoice_id = 0 THEN res_partner.name
+                    ELSE rp.name
+                END AS name, 
+            uomt.name AS unidad, product_product.default_code, 
+                CASE
+                    WHEN vst_stock_move.price_unit = 0::double precision THEN COALESCE(vst_invoice_line.price_unit, 0::numeric)::double precision
+                    ELSE vst_stock_move.price_unit
+                END AS cadquiere, 
+            vst_account_currencyrate.currency_rate, 
+                CASE
+                    WHEN vst_stock_move.price_unit = 0::double precision THEN COALESCE(vst_invoice_line.price_unit, 0::numeric)::double precision
+                    ELSE vst_stock_move.price_unit
+                END AS price_unit, 
+            vst_stock_move.invoice_id, 
+                CASE
+                    WHEN vst_stock_move.invoice_id <> 0 THEN account_period.name
+                    ELSE getperiod(vst_stock_move.date::date::timestamp without time zone, true)
+                END AS periodo, 
+            account_analytic_account.name AS ctanalitica, 
+            lpad(vst_stock_move.motivo_guia::text, 2, '0'::text)::character varying AS operation_type, 
+            lpad(it_type_document.code::text, 2, '0'::text) AS doc_type_ope, 
+                CASE
+                    WHEN vst_stock_move.invoice_id <> 0 THEN (aa_invoice_m.code::text || ' - '::text) || aa_invoice_m.name::text
+                    ELSE ''::text
+                END AS account_invoice, 
+            product_category.id AS category_id, vst_stock_move.mrpname, 
+            vst_stock_move.name AS stock_doc, 
+            COALESCE(vst_stock_move.price_unit, 0::numeric::double precision) AS price_stock_move, 
+            it_type_document.code AS type_doc, 
+            COALESCE(account_invoice.supplier_invoice_number, ''::character varying) AS numdoc_cuadre, 
+            res_partner.type_number
+           FROM vst_stock_move_final vst_stock_move
+      JOIN product_product ON vst_stock_move.product_id = product_product.id
+   JOIN product_template ON product_product.product_tmpl_id = product_template.id
+   JOIN product_category ON product_template.categ_id = product_category.id
+   JOIN product_uom ON vst_stock_move.product_uom = product_uom.id
+   JOIN product_uom uomt ON product_template.uom_id = uomt.id
+   LEFT JOIN vst_invoice_line_final vst_invoice_line ON vst_stock_move.invoice_id = vst_invoice_line.invoice_id AND vst_stock_move.product_id = vst_invoice_line.product_id
+   LEFT JOIN account_invoice ON vst_stock_move.invoice_id = account_invoice.id
+   LEFT JOIN account_move ON account_invoice.move_id = account_move.id
+   LEFT JOIN account_analytic_account ON vst_stock_move.analitic_id = account_analytic_account.id
+   JOIN stock_location origen ON vst_stock_move.location_id = origen.id
+   JOIN stock_location destino ON vst_stock_move.location_dest_id = destino.id
+   LEFT JOIN res_partner ON vst_stock_move.partner_id = res_partner.id
+   LEFT JOIN res_partner rp ON account_invoice.partner_id = rp.id
+   LEFT JOIN vst_account_currencyrate ON vst_stock_move.id = vst_account_currencyrate.move_id
+   LEFT JOIN account_period ON account_invoice.period_id = account_period.id
+   LEFT JOIN it_type_document ON account_invoice.type_document_id = it_type_document.id
+   LEFT JOIN account_account aa_invoice_m ON vst_invoice_line.account_id = aa_invoice_m.id
+   LEFT JOIN ir_property ipx ON ipx.res_id::text = ('product.template,'::text || product_template.id) AND ipx.name::text = 'cost_method'::text) k
+   LEFT JOIN ( SELECT "substring"(ir_property.res_id::text, "position"(ir_property.res_id::text, ','::text) + 1)::integer AS categ_id, 
+            "substring"(ir_property.value_reference::text, "position"(ir_property.value_reference::text, ','::text) + 1)::integer AS account_id
+           FROM ir_property
+          WHERE ir_property.name::text = 'property_stock_valuation_account_id'::text) j ON k.category_id = j.categ_id
+   LEFT JOIN account_account aa_cp ON j.account_id = aa_cp.id;
+
+ALTER TABLE vst_kardex_fis_1_final
+  OWNER TO openpg;
+
+
+
+
+
+-- View: vst_kardex_fis_1_1_final
+
+-- DROP VIEW vst_kardex_fis_1_1_final;
+
+CREATE OR REPLACE VIEW vst_kardex_fis_1_1_final AS 
+         SELECT vst_kardex_fis_1.id, vst_kardex_fis_1.origen, 
+            vst_kardex_fis_1.destino, vst_kardex_fis_1.serial, 
+            vst_kardex_fis_1.nro, vst_kardex_fis_1.cantidad AS ingreso, 
+            0::numeric AS salida, 0::numeric AS saldof, 
+            vst_kardex_fis_1.producto, vst_kardex_fis_1.fecha, 
+            vst_kardex_fis_1.id_origen, vst_kardex_fis_1.id_destino, 
+            vst_kardex_fis_1.product_id, 
+            vst_kardex_fis_1.id_destino AS location_id, 
+            vst_kardex_fis_1.destino AS almacen, vst_kardex_fis_1.categoria, 
+            vst_kardex_fis_1.name, 'in'::text AS type, 
+            'ingreso'::text AS esingreso, vst_kardex_fis_1.default_code, 
+            vst_kardex_fis_1.unidad, 
+                CASE
+                    WHEN ipx.value_text = 'specific'::text THEN vst_kardex_fis_1.price_unit
+                    ELSE 
+                    CASE
+                        WHEN btrim(vst_kardex_fis_1.type_doc::text) = '07'::text THEN vst_kardex_fis_1.price_stock_move * vst_kardex_fis_1.cantidad::double precision
+                        ELSE vst_kardex_fis_1.price_unit * vst_kardex_fis_1.cantidad::double precision
+                    END
+                END AS debit, 
+            0::numeric AS credit, 0::numeric AS saldov, 
+                CASE
+                    WHEN btrim(vst_kardex_fis_1.type_doc::text) = '07'::text THEN vst_kardex_fis_1.price_stock_move
+                    ELSE vst_kardex_fis_1.cadquiere
+                END AS cadquiere, 
+            0::numeric AS cprom, vst_kardex_fis_1.periodo, 
+            vst_kardex_fis_1.ctanalitica, vst_kardex_fis_1.operation_type, 
+            vst_kardex_fis_1.doc_type_ope, vst_kardex_fis_1.account_invoice, 
+            vst_kardex_fis_1.product_account, vst_kardex_fis_1.ubicacion_origen, 
+            vst_kardex_fis_1.ubicacion_destino, vst_kardex_fis_1.stock_moveid, 
+            vst_kardex_fis_1.mrpname, vst_kardex_fis_1.stock_doc, 
+            vst_kardex_fis_1.type_doc, vst_kardex_fis_1.numdoc_cuadre, 
+            vst_kardex_fis_1.doc_partner
+           FROM vst_kardex_fis_1_final vst_kardex_fis_1
+      JOIN stock_location ON vst_kardex_fis_1.id_destino = stock_location.id
+   JOIN product_product pp ON pp.id = vst_kardex_fis_1.product_id
+   JOIN product_template pt ON pt.id = pp.product_tmpl_id
+   LEFT JOIN ir_property ipx ON ipx.res_id::text = ('product.template,'::text || pt.id) AND ipx.name::text = 'cost_method'::text
+  WHERE stock_location.usage::text = 'internal'::text
+UNION ALL 
+         SELECT vst_kardex_fis_1.id, vst_kardex_fis_1.origen, 
+            vst_kardex_fis_1.destino, vst_kardex_fis_1.serial, 
+            vst_kardex_fis_1.nro, 0::numeric AS ingreso, 
+            vst_kardex_fis_1.cantidad AS salida, 0::numeric AS saldof, 
+            vst_kardex_fis_1.producto, vst_kardex_fis_1.fecha, 
+            vst_kardex_fis_1.id_origen, vst_kardex_fis_1.id_destino, 
+            vst_kardex_fis_1.product_id, 
+            vst_kardex_fis_1.id_origen AS location_id, 
+            vst_kardex_fis_1.origen AS almacen, vst_kardex_fis_1.categoria, 
+            vst_kardex_fis_1.name, 'out'::text AS type, 
+            'salida'::text AS esingreso, vst_kardex_fis_1.default_code, 
+            vst_kardex_fis_1.unidad, 0::numeric AS debit, 0::numeric AS credit, 
+            0::numeric AS saldov, 0::numeric AS cadquiere, 0::numeric AS cprom, 
+            vst_kardex_fis_1.periodo, vst_kardex_fis_1.ctanalitica, 
+            vst_kardex_fis_1.operation_type, vst_kardex_fis_1.doc_type_ope, 
+            vst_kardex_fis_1.account_invoice, vst_kardex_fis_1.product_account, 
+            vst_kardex_fis_1.ubicacion_origen, 
+            vst_kardex_fis_1.ubicacion_destino, vst_kardex_fis_1.stock_moveid, 
+            vst_kardex_fis_1.mrpname, vst_kardex_fis_1.stock_doc, 
+            vst_kardex_fis_1.type_doc, vst_kardex_fis_1.numdoc_cuadre, 
+            vst_kardex_fis_1.doc_partner
+           FROM vst_kardex_fis_1_final vst_kardex_fis_1
+      JOIN stock_location ON vst_kardex_fis_1.id_origen = stock_location.id
+     WHERE stock_location.usage::text = 'internal'::text;
+
+ALTER TABLE vst_kardex_fis_1_1_final
+  OWNER TO openpg;
+
+
+
+
+
+-- View: vst_kardex_sunat_final
+
+-- DROP VIEW vst_kardex_sunat_final;
+
+CREATE OR REPLACE VIEW vst_kardex_sunat_final AS 
+ SELECT t.almacen, t.categoria, t.producto, t.fecha, t.periodo, t.ctanalitica, 
+    t.serial, t.nro, t.operation_type, t.name, t.ingreso, t.salida, 
+    0::numeric AS saldof, t.debit::numeric AS debit, t.credit, 
+    t.cadquiere::numeric AS cadquiere, 0::numeric AS saldov, 
+    0::numeric AS cprom, t.type::character varying AS type, t.esingreso, 
+    t.product_id, t.location_id, t.doc_type_ope, t.ubicacion_origen, 
+    t.ubicacion_destino, t.stock_moveid, t.product_account, t.account_invoice, 
+    t.default_code, t.unidad, t.mrpname, t.stock_doc, t.origen, t.destino, 
+    t.type_doc, t.numdoc_cuadre, t.doc_partner, t.invoicelineid
+   FROM (         SELECT vst_kardex_fis_1_1.almacen, 
+                    vst_kardex_fis_1_1.categoria, vst_kardex_fis_1_1.producto, 
+                    vst_kardex_fis_1_1.fecha::date AS fecha, 
+                    vst_kardex_fis_1_1.periodo, vst_kardex_fis_1_1.ctanalitica, 
+                    vst_kardex_fis_1_1.serial, vst_kardex_fis_1_1.nro, 
+                    vst_kardex_fis_1_1.operation_type, vst_kardex_fis_1_1.name, 
+                    vst_kardex_fis_1_1.ingreso, vst_kardex_fis_1_1.salida, 
+                    vst_kardex_fis_1_1.debit, vst_kardex_fis_1_1.credit, 
+                    vst_kardex_fis_1_1.type, vst_kardex_fis_1_1.esingreso, 
+                    vst_kardex_fis_1_1.product_id, 
+                    vst_kardex_fis_1_1.location_id, 
+                    vst_kardex_fis_1_1.cadquiere, 
+                    vst_kardex_fis_1_1.doc_type_ope::character varying AS doc_type_ope, 
+                    vst_kardex_fis_1_1.ubicacion_origen, 
+                    vst_kardex_fis_1_1.ubicacion_destino, 
+                    vst_kardex_fis_1_1.stock_moveid, 
+                    vst_kardex_fis_1_1.product_account, 
+                    vst_kardex_fis_1_1.account_invoice, 
+                    vst_kardex_fis_1_1.default_code, vst_kardex_fis_1_1.unidad, 
+                    vst_kardex_fis_1_1.mrpname, vst_kardex_fis_1_1.stock_doc, 
+                    vst_kardex_fis_1_1.origen, vst_kardex_fis_1_1.destino, 
+                    vst_kardex_fis_1_1.type_doc, 
+                    vst_kardex_fis_1_1.numdoc_cuadre, 
+                    vst_kardex_fis_1_1.doc_partner, 0 AS invoicelineid
+                   FROM vst_kardex_fis_1_1_final vst_kardex_fis_1_1
+        UNION ALL 
+                 SELECT vst_kardex_debitcredit_note.complete_name, 
+                    vst_kardex_debitcredit_note.categoria, 
+                    vst_kardex_debitcredit_note.name_template AS producto, 
+                    vst_kardex_debitcredit_note.date AS fecha, 
+                    vst_kardex_debitcredit_note.getperiod, 
+                    vst_kardex_debitcredit_note.ctanalitica, 
+                    vst_kardex_debitcredit_note.serial, 
+                    vst_kardex_debitcredit_note.getnumber, 
+                    vst_kardex_debitcredit_note.operation_type, 
+                    vst_kardex_debitcredit_note.name, 
+                    vst_kardex_debitcredit_note.ingreso, 
+                    vst_kardex_debitcredit_note.salida, 
+                    vst_kardex_debitcredit_note.debit, 
+                    vst_kardex_debitcredit_note.credit, ''::text AS type, 
+                    vst_kardex_debitcredit_note.esingreso, 
+                    vst_kardex_debitcredit_note.product_id, 
+                    vst_kardex_debitcredit_note.location_id, 
+                    0::numeric AS cadquiere, 
+                    vst_kardex_debitcredit_note.doc_type_ope::character varying AS doc_type_ope, 
+                    0 AS ubicacion_origen, 0 AS ubicacion_destino, 
+                    0 AS stock_moveid, 
+                    (aa_cp.code::text || ' - '::text) || aa_cp.name::text AS product_account, 
+                    vst_kardex_debitcredit_note.account_invoice, 
+                    ''::text AS default_code, ''::text AS unidad, 
+                    ''::text AS mrpname, ''::text AS stock_doc, 
+                    ''::text AS origen, ''::text AS destino, 
+                    vst_kardex_debitcredit_note.type_doc::character varying(2) AS type_doc, 
+                    vst_kardex_debitcredit_note.numdoc_cuadre, 
+                    vst_kardex_debitcredit_note.type_number AS doc_partner, 
+                    vst_kardex_debitcredit_note.invoicelineid
+                   FROM vst_kardex_credit_final vst_kardex_debitcredit_note
+              JOIN product_product ON vst_kardex_debitcredit_note.product_id = product_product.id
+         JOIN product_template ON product_product.product_tmpl_id = product_template.id
+    JOIN product_category ON product_template.categ_id = product_category.id
+   LEFT JOIN ( SELECT "substring"(ir_property.res_id::text, "position"(ir_property.res_id::text, ','::text) + 1)::integer AS categ_id, 
+             "substring"(ir_property.value_reference::text, "position"(ir_property.value_reference::text, ','::text) + 1)::integer AS account_id
+            FROM ir_property
+           WHERE ir_property.name::text = 'property_stock_valuation_account_id'::text) j ON product_category.id = j.categ_id
+   LEFT JOIN account_account aa_cp ON j.account_id = aa_cp.id) t
+  ORDER BY t.almacen, t.producto, t.periodo, t.fecha, t.esingreso;
+
+ALTER TABLE vst_kardex_sunat_final
+  OWNER TO openpg;
+

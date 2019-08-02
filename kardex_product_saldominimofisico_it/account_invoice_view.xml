@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record model="ir.ui.view" id="view_detalle_simple_fisico_total_d_minimo_wizard_form">
+            <field name="name">detalle.simple.fisico.total.d.minimo.wizard.form</field>
+            <field name="model">detalle.simple.fisico.total.d.minimo.wizard</field>
+            <field name="arch" type="xml">                
+                <form string="Wizard">
+                    <group>
+                        <group>
+                            <field name="fecha"/>
+                        </group>
+                        <group></group>
+                    </group>                    
+                    <separator/>
+                    <footer>
+                        <button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+                        o
+                        <button string="Cancelar" special="cancel" class="oe_link"/>                        
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="view_kardex_fisico_d_minimo" model="ir.ui.view">
+            <field name="name">detalle.simple.fisico.total.d.minimo.tree</field>
+            <field name="model">detalle.simple.fisico.total.d.minimo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">        
+                <tree string="Saldos" create="false" delete="false">
+                    <field name="producto" />
+                    <field name="almacen" />
+                    <field name="saldo" />
+                    <field name="p_min" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_kardex_fisico_dm_minimo_filter" model="ir.ui.view">
+            <field name="name">detalle.simple.fisico.total.d.minimo.select</field>
+            <field name="model">detalle.simple.fisico.total.d.minimo</field>
+            <field name="arch" type="xml">
+                <search string="Saldos">
+                   <field name="producto"/>
+                    <field name="almacen" />
+                   <group expand="0" string="Group By">
+                       <filter string="Producto" icon="terp-personal" domain="[]" context="{'group_by' : 'producto'}" />
+                   </group>
+               </search>
+            </field>
+        </record>
+
+
+
+        <record id="kardex_fisico_dmc_minimo_actionn" model="ir.actions.act_window">
+            <field name="name">Saldos Minimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">detalle.simple.fisico.total.d.minimo.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Saldos Minimo" id="kardex_fisicoma_menuminimo"
+                 parent="stock.menu_stock_inventory_control" action="kardex_fisico_dmc_minimo_actionn"
+                 sequence="3" />
+
+
+
+
+    </data>
+</openerp>

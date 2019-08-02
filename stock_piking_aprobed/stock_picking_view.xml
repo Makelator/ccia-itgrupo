@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="priority" eval="1"/>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_scrap']" position="after">
+                <button name="aprovar_retorno" string="Aprobar" type="object"
+                        attrs="{'invisible':['|',('is_return_picking_compra','=',False),('user_proved','!=',False)]}"
+                        groups="stock_piking_aprobed.group_aprobacion_devolucion_compra" />
+                <button name="aprovar_retorno" string="Aprobar" type="object"
+                        attrs="{'invisible':['|',('is_return_picking_venta','=',False),('user_proved','!=',False)]}"
+                        groups="stock_piking_aprobed.group_aprobacion_devolucion_venta" />
+
+            </xpath>
+            <page name="extra" position="after">
+                <page name="for_aprobed_return" string="Aprobar"
+                      attrs="{'invisible':[('is_return_picking_compra','=',False),('is_return_picking_venta','=',False)]}">
+                    <group>
+                        <group>
+                            <field name="is_return_picking_compra" string="Esta aprobado" invisible="1"/>
+                            <field name="is_return_picking_venta" string="Esta aprobado" invisible="1"/>
+                            <field name="fecha_aproved_devolution" string="Fecha de aprobacion" readonly="1"/>
+                            <field name="user_proved" string="Usuario aprueba" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </page>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="stock_picking_form" model="ir.ui.view">
+      <field name="name">stock.picking.import.view</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form"/>
+      <field name="groups_id" eval="[(6,0, [ref('precio_unitario_stock_picking_access_it.precio_unitario_sp_admin_group')])]" />
+      <field name="arch" type="xml">
+
+        <xpath expr="//sheet/notebook/page/field[@name='move_lines']" position="attributes">
+             
+             <attribute name="attrs">{'readonly':0}</attribute>
+             <attribute name="groups">precio_unitario_stock_picking_access_it.precio_unitario_sp_admin_group</attribute>
+
+        </xpath>
+
+
+      </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

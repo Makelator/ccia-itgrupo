@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="view_import_restinv1_form" model="ir.ui.view">
+            <field name="name">import.rest.inv1.form</field>
+            <field name="model">import.rest.inv1</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Importar" type="object" name="create_inv" class="oe_highlight"/>                       
+                    </header>
+                    <sheet>
+                        <group string="Datos de Importación">
+
+                            <group>
+                                <field name="file_inv"/>
+                                <field name="location_id"/>
+                                <field name="location_dest_id"/>
+                                <field name="date_inv"/>
+                                <field name="picking_type_id"/>
+                            </group>
+                            <group></group>
+                        </group>
+                        <group> 
+                            <button string="Obtener líneas" type="object" name="load_lines" class="oe_highlight"/>
+                        </group>
+                        <notebook>
+                            <page string="Datos a importar">
+                                <field name="lines" readonly="0">
+                                    <tree string="valores">
+                                        <field name="product_id"/>
+                                        <field name="product_qty"/>
+                                        <field name="price_unit"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_import_restinv_view" model="ir.actions.act_window">
+            <field name="name">Importar Inventario Inicial</field>
+            <field name="res_model">import.rest.inv1</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem 
+            name="Importar Inventario Inicial"
+            action="action_import_restinv_view" 
+            id="menu_import_restinv" 
+            parent="stock.menu_product_in_config_stock"
+        />
+	</data>
+</openerp>

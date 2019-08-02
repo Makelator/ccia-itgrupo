@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_kardex_vs_account_line_tree" model="ir.ui.view">
+            <field name="name">kardex.vs.account.line.tree</field>
+            <field name="model">kardex.vs.account.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">        
+                <tree string="Por lineas de kardex" create="false" delete="false">
+                    <field name="cta"/>
+                    <field name="periodo"/>
+                    <field name="proveedor"/>
+                    <field name="factura"/>
+                    <field name="producto"/>
+                    <field name="montokardex" string="Monto Kardex"/>
+                    <field name="contable" string="Monto Contabilidad"/>
+                    <field name="dif"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_kardex_vs_account_line_filter" model="ir.ui.view">
+            <field name="name">kardex.vs.account.line.search</field>
+            <field name="model">kardex.vs.account.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Por lineas de kardex">
+                    <field name="periodo" strng="Periodo"/>
+                    <field name="cta" strng="Cuenta"/>
+                    <field name="producto" strng="Producto"/>
+                    <field name="proveedor" strng="Proveedor"/>
+                    <field name="factura" strng="factura"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Periodo" icon="terp-partner" domain="[]" context="{'group_by':'periodo'}"/>
+                        <filter string="Proveedor" icon="terp-partner" domain="[]" context="{'group_by':'proveedor'}"/>
+                        <filter string="Producto" icon="terp-partner" domain="[]" context="{'group_by':'producto'}"/>
+                        <filter string="Cuenta" icon="terp-partner" domain="[]" context="{'group_by':'cta'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="kardex_vs_account_line_tree_action" model="ir.actions.act_window">
+            <field name="name">Por lineas de kardex</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">kardex.vs.account.line</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_type">tree</field>
+            <field name="multi">True</field>
+        </record>
+    </data>
+</openerp>

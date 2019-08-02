@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	    <record id="view_catalog_12_form" model="ir.ui.view">
+            <field name="name">Tipos de operacion</field>
+            <field name="model">einvoice.catalog.12</field>
+            <field name="arch" type="xml">
+                <form string="Tipos de operacion">
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </form>	
+            </field>
+	    </record>
+
+        <record model="ir.ui.view" id="view_catalog_12_tree">
+			<field name="name">einvoice.catalog.12.tree</field>
+			<field name="model">einvoice.catalog.12</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree>
+					<field name="code"/>
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+	    <record model="ir.actions.act_window" id="catalog_12_action">
+		    <field name="name">Tipos de operacion</field>
+		    <field name="res_model">einvoice.catalog.12</field>
+		    <field name="view_type">form</field>
+		    <field name="view_mode">tree,form</field>
+	    </record>
+
+
+
+		<menuitem name="Catalog 12 - Tipos de operacion inventario" id="einvoice_catalog_12_menu" parent="odoope_einvoice_base.einvoice_configuration_menu" action="catalog_12_action" sequence="12"/>
+
+
+	</data>
+</openerp>

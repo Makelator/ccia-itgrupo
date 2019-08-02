@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+        <record id="view_detalle_saldo_fisico_tree" model="ir.ui.view">
+            <field name="name">detalle.saldo.fisico.tree</field>
+            <field name="model">detalle.saldo.fisico</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Saldos" create="false" delete="false" editable="bottom" context="{'nombre_reducido':1}">
+                    <field name="compra_id"  readonly="1" context="{'nombre_reducido':1}"/>
+                    <field name="venta_id"  readonly="1" context="{'nombre_reducido':1}"/>
+                    <field name="fecha" readonly="1"/>
+                    <field name="picking_id"  readonly="1"/>
+                    <field name="move_id" readonly="1"/>
+                    <field name="cantidad" readonly="1"/>
+                    <field name="unidad" string="Unidad" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+
+
+
+        <record model="ir.ui.view" id="view_detalle_simple_fisico_total_d_wizard_form">
+            <field name="name">detalle.simple.fisico.total.d.wizard.form</field>
+            <field name="model">detalle.simple.fisico.total.d.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard">
+                    <group>
+                        <group>
+                            <field name="fiscalyear_id"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <separator/>
+                    <footer>
+                        <button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+                        o
+                        <button string="Cancelar" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="view_kardex_fisico_d" model="ir.ui.view">
+            <field name="name">detalle.simple.fisico.total.d.tree</field>
+            <field name="model">detalle.simple.fisico.total.d</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Saldos" create="false" delete="false">
+                    <field name="producto" />
+                    <field name="unidad" />
+                    <field name="categoria" />
+                    <field name="almacen" />
+                    <field name="saldo" string="Stock Disponible"  help="Stock Fisico - (Reservas +  Salidas en Espera)" />
+                                        <button name="get_stock_disponible" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_fisico" string="Stock Físico" help="Saldo físico en almacen" />
+                                        <button name="get_saldo_fisico" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_fisico','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="por_ingresar" help="Existencias por ingresar (Compras o Transf. Int.)"/>
+                                        <button name="get_por_ingresar" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('por_ingresar','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="transito" help="Existencias en transito."/>
+                                        <button name="get_transito" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('transito','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="salida_espera" help="Ventas, Transf Int. con saldo no disponible" />
+                                        <button name="get_salida_espera" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('salida_espera','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="reservas" help="Reservas (Vtas, Transf. Int) se generan cuando hay Stock Disponible" />
+                                        <button name="get_reservas" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('reservas','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_virtual" help="Stock Fisico + Por Ingresar + Trnasito - Salida Espera - Reservas" />
+                                        <button name="get_saldo_virtual" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_virtual','=',0)]}" context="{'nombre_reducido':1}"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="view_kardex_fisico_dm_filter" model="ir.ui.view">
+            <field name="name">detalle.simple.fisico.total.d.select</field>
+            <field name="model">detalle.simple.fisico.total.d</field>
+            <field name="arch" type="xml">
+                <search string="Saldos">
+                   <field name="producto"/>
+                   <field name="categoria"/>
+                    <field name="almacen" />
+                   <group expand="0" string="Group By">
+                       <filter string="Producto" icon="terp-personal" domain="[]" context="{'group_by' : 'producto'}" />
+                       <filter string="Categoría" icon="terp-personal" domain="[]" context="{'group_by' : 'categoria'}" />
+                       <filter string="Almacen" icon="terp-personal" domain="[]" context="{'group_by' : 'almacen'}" />
+                   </group>
+               </search>
+            </field>
+        </record>
+
+
+
+        <record id="kardex_fisico_dmc_actionn" model="ir.actions.act_window">
+            <field name="name">Saldos y movimientos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">detalle.simple.fisico.total.d.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem name="Saldos" id="kardex_fisicomc_menu"
+                 parent="kardex_it.kardex_main_menu" action="kardex_fisico_dmc_actionn"
+                 sequence="3" />
+
+        <menuitem name="Saldos" id="kardex_fisicoso_menu"
+                 parent="sales_team.menu_sales" action="kardex_fisico_dmc_actionn"
+                 sequence="7" />
+
+        <menuitem name="Saldos" id="kardex_fisicoma_menu"
+                 parent="stock.menu_stock_inventory_control" action="kardex_fisico_dmc_actionn"
+                 sequence="3" />
+
+
+
+
+        <menuitem name="Saldos" id="kardex_fisicomal_menu_compra"
+                 parent="purchase.menu_purchase_control" action="kardex_fisico_dmc_actionn"
+                 sequence="7" />
+
+
+
+
+
+
+        <record model="ir.ui.view" id="product_template_form_view_procurement_button">
+            <field name="name">product.template_procurement</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
+            <field name="arch" type="xml">
+                <button name="action_open_quants" position="replace">
+
+                    <button type="object"
+                            name="get_saldo_kardexfisico"
+                            attrs="{'invisible':[('type', '!=', 'product')]}"
+                            class="oe_stat_button" icon="fa-building-o">
+                            <field name="saldo_kardexfisico" widget="statinfo" string="Stock Real"/>
+                        </button>
+
+                </button>
+
+                <button name="%(stock.action_stock_level_forecast_report_template)d" position="replace">
+
+                    <button type="object"
+                            name="get_saldo_kardexfisico"
+                            attrs="{'invisible':[('type', '!=', 'product')]}"
+                            class="oe_stat_button" icon="fa-building-o">
+                            <field name="saldo_kardexfisico_previsto" widget="statinfo" string="Previsto"/>
+                        </button>
+
+                </button>
+
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="product_form_view_procurement_button">
+            <field name="name">product.product_procurement</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="stock.product_form_view_procurement_button"/>
+            <field name="arch" type="xml">
+                <button name="%(stock.product_open_quants)d" position="replace">
+
+                    <button type="object"
+                            name="get_saldo_kardexfisico"
+                            attrs="{'invisible':[('type', '!=', 'product')]}"
+                            class="oe_stat_button" icon="fa-building-o">
+                            <field name="saldo_kardexfisico" widget="statinfo" string="Stock Real"/>
+                        </button>
+
+                </button>
+
+                <button name="%(stock.action_stock_level_forecast_report_product)d" position="replace">
+
+                    <button type="object"
+                            name="get_saldo_kardexfisico"
+                            attrs="{'invisible':[('type', '!=', 'product')]}"
+                            class="oe_stat_button" icon="fa-building-o">
+                            <field name="saldo_kardexfisico_previsto" widget="statinfo" string="Previsto"/>
+                        </button>
+
+                </button>
+
+            </field>
+        </record>
+
+
+
+        <record id="view_template_property_form" model="ir.ui.view">
+            <field name="name">product.template.stock.property.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="arch" type="xml">
+                <!--<group string="Stock and Expected Variations" position="attributes">
+                    <attribute name="attrs"/>
+                    <attribute name="invisible">1</attribute>
+                </group>-->
+
+                <field name="route_ids" position="before">
+
+
+
+                </field>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_detalle_simple_kfisico_form">
+            <field name="name">detalle.simple.kfisico.form</field>
+            <field name="model">detalle.simple.kfisico</field>
+            <field name="arch" type="xml">
+                <form string="Detalle" version="8.0" create="0" delete="0">
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <field name="lineas" readonly="1">
+                            <tree>
+                                <field name="almacen"/>
+                                <field name="product_id" />
+                    <field name="saldo" string="Stock Disponible"  help="Stock Fisico - (Reservas +  Salidas en Espera)" />
+                                        <button name="get_stock_disponible" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo','=',0)]}"/>
+                    <field name="saldo_fisico" string="Stock Físico" help="Saldo físico en almacen" />
+                                        <button name="get_saldo_fisico" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_fisico','=',0)]}"/>
+                    <field name="por_ingresar" help="Existencias por ingresar (Compras o Transf. Int.)"/>
+                                        <button name="get_por_ingresar" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('por_ingresar','=',0)]}"/>
+                    <field name="transito" help="Existencias en transito."/>
+                                        <button name="get_transito" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('transito','=',0)]}"/>
+                    <field name="salida_espera" help="Ventas, Transf Int. con saldo no disponible" />
+                                        <button name="get_salida_espera" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('salida_espera','=',0)]}"/>
+                    <field name="reservas" help="Reservas (Vtas, Transf. Int) se generan cuando hay Stock Disponible" />
+                                        <button name="get_reservas" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('reservas','=',0)]}"/>
+                    <field name="saldo_virtual" help="Stock Fisico + Por Ingresar + Trnasito - Salida Espera - Reservas" />
+                                        <button name="get_saldo_virtual" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_virtual','=',0)]}"/>
+
+                            </tree>
+                        </field>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="view_detalle_simple_kfisico_producto_form">
+            <field name="name">detalle.simple.kfisico.form</field>
+            <field name="model">detalle.simple.kfisico</field>
+            <field name="arch" type="xml">
+                <form string="Detalle" version="8.0" create="0" delete="0">
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <field name="lineas" readonly="1">
+                            <tree>
+                                <field name="almacen"/>
+                    <field name="saldo" string="Stock Disponible"  help="Stock Fisico - (Reservas +  Salidas en Espera)" />
+                                        <button name="get_stock_disponible" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_fisico" string="Stock Físico" help="Saldo físico en almacen" />
+                                        <button name="get_saldo_fisico" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_fisico','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="por_ingresar" help="Existencias por ingresar (Compras o Transf. Int.)"/>
+                                        <button name="get_por_ingresar" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('por_ingresar','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="transito" help="Existencias en transito."/>
+                                        <button name="get_transito" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('transito','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="salida_espera" help="Ventas, Transf Int. con saldo no disponible" />
+                                        <button name="get_salida_espera" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('salida_espera','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="reservas" help="Reservas (Vtas, Transf. Int) se generan cuando hay Stock Disponible" />
+                                        <button name="get_reservas" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('reservas','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_virtual" help="Stock Fisico + Por Ingresar + Trnasito - Salida Espera - Reservas" />
+                                        <button name="get_saldo_virtual" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_virtual','=',0)]}" context="{'nombre_reducido':1}"/>
+                            </tree>
+                        </field>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="view_detalle_simple_kfisicot_form">
+            <field name="name">detalle.simple.kfisicot.form</field>
+            <field name="model">detalle.simple.kfisicot</field>
+            <field name="arch" type="xml">
+                <form string="Detalle" version="8.0">
+                        <group>
+                            <group>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <field name="lineas" readonly="1">
+                            <tree>
+                                <field name="almacen"/>
+                                <field name="producto"/>
+                                <field name="unidad"/>
+                    <field name="saldo" string="Stock Disponible"  help="Stock Fisico - (Reservas +  Salidas en Espera)" />
+                                        <button name="get_stock_disponible" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_fisico" string="Stock Físico" help="Saldo físico en almacen" />
+                                        <button name="get_saldo_fisico" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_fisico','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="por_ingresar" help="Existencias por ingresar (Compras o Transf. Int.)"/>
+                                        <button name="get_por_ingresar" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('por_ingresar','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="transito" help="Existencias en transito."/>
+                                        <button name="get_transito" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('transito','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="salida_espera" help="Ventas, Transf Int. con saldo no disponible" />
+                                        <button name="get_salida_espera" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('salida_espera','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="reservas" help="Reservas (Vtas, Transf. Int) se generan cuando hay Stock Disponible" />
+                                        <button name="get_reservas" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('reservas','=',0)]}" context="{'nombre_reducido':1}"/>
+                    <field name="saldo_virtual" help="Stock Fisico + Por Ingresar + Trnasito - Salida Espera - Reservas" />
+                                        <button name="get_saldo_virtual" icon="fa-pencil-square-o" string="Ver Movimientos" type="object" attrs="{'invisible':[('saldo_virtual','=',0)]}" context="{'nombre_reducido':1}"/>
+                            </tree>
+                        </field>
+                </form>
+            </field>
+        </record>
+
+
+
+
+        <record model="ir.ui.view" id="view_picking_form">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+                <field name="picking_type_id" position="after">
+                    <field name="type_code_stock" />
+                </field>
+
+                <xpath expr="//header/button[@name='action_assign']" position="after">
+                    <button name="get_disponibilidad_kfisico" string="Ver Disponibilidad" type="object" class="oe_highlight" attrs="{'invisible':[('type_code_stock','=','incoming')]}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+
+        <record model="ir.ui.view" id="product_template_kanban_stock_view">
+            <field name="name">Product Template Kanban Stock</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_kanban_stock_view"/>
+            <field name="arch" type="xml">
+                <field name="qty_available" position="replace">
+                    <field name="saldo_kardexfisico"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_stock_product_template_tree" model="ir.ui.view">
+            <field name="name">product.template.stock.tree.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
+            <field name="arch" type="xml">
+
+                    <field name="qty_available" position="replace" >
+                        <field name="saldo_kardexfisico"/>
+                    </field>
+
+                    <field name="virtual_available" position="replace">
+                        <field name="virtual_available" invisible="1" />
+                        <field name="saldo_kardexfisico_previsto"/>
+                    </field>
+
+            </field>
+        </record>
+
+                <record id="view_stock_product_tree" model="ir.ui.view">
+            <field name="name">product.stock.tree.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="stock.view_stock_product_tree"/>
+            <field name="arch" type="xml">
+                    <field name="qty_available" position="replace" >
+                        <field name="saldo_kardexfisico"/>
+                    </field>
+
+                    <field name="virtual_available" position="replace">
+                        <field name="virtual_available" invisible="1" />
+                        <field name="saldo_kardexfisico_previsto"/>
+                    </field>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

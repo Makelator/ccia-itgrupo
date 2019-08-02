@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="view_kardex_product_export_form" model="ir.ui.view">
+            <field name="name">kardex.product.export.form</field>
+            <field name="model">kardex.product.export</field>
+            <field name="arch" type="xml">
+                <form string="Generar Kardex" version="8.0">
+                    <group>
+                        <group>
+                            <field name="fecha_inicio"  invisible="1"/>
+                            <field name="fecha_final"  invisible="1"/>
+                            <field name="fecha_ini_mod" attrs="{'readonly':[('check_fecha', '=', False)],'required':[('check_fecha', '=', True)]}"/>
+                            <field name="fecha_fin_mod" attrs="{'readonly':[('check_fecha', '=', False)],'required':[('check_fecha', '=', True)]}"/>
+                            <field name="check_fecha" />
+    
+                            <field name="alllocations"/>
+
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <field name="ubicaciones" domain="[('usage','in',['internal','inventory','transit','procurement','production'])]" attrs="{'invisible':[('alllocations', '=', True)]}"/>
+                    <footer>
+                        <button string="Generar" name="update_or_create_table" type="object" class="oe_highlight"/>
+                        <!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_generarproduct_kardex" model="ir.actions.act_window">
+            <field name="name">Generar Kardex</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">kardex.product.export</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+
+        <record model="ir.values" id="crear_product_save_kardex_item">
+            <field name="name">Generar Kardex</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,%d'%action_generarproduct_kardex" />
+            <field name="key">action</field>
+            <field name="model">product.template</field>
+        </record>
+
+
+    </data>
+</openerp>

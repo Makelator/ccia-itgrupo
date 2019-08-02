@@ -1,0 +1,30 @@
+<odoo>
+  <data>
+
+    <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name="arch" type="xml">
+
+               <xpath expr="//form/notebook" position="inside">
+
+                  <page string="Kardex">
+                    <group>
+                      <field name="prefijo" />
+                      <field name="etiqueta_analitica" />
+                    </group>
+
+                  </page>
+
+               </xpath>
+
+
+            </field>
+    </record>   
+
+
+
+
+  </data>
+</odoo>

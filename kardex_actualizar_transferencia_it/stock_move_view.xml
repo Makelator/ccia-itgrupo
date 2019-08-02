@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+       
+        <record id="view_valor_unitario_kardex" model="ir.ui.view">
+            <field name="name">valor.unitario.kardex.form</field>
+            <field name="model">valor.unitario.kardex</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Valorizar Transferencias" version="7.0">
+                    <group>
+                        <field name="fecha_inicio" required="1"/>
+                        <field name="fecha_final" required="1"/>
+                        <field name="product" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="do_valor" string="Valorizar" type="object" class="oe_highlight"/>                       
+                        or
+                        <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+             </field>
+        </record>
+
+
+
+        <record id="valor_unitario_kardex_action" model="ir.actions.act_window">
+            <field name="name">Valorizar Transferencias</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">valor.unitario.kardex</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+  <menuitem parent="account.menu_finance_reports" name="Valorizar Transferencias" id="valor_unitario_kardex_menu" action="valor_unitario_kardex_action"/>
+      
+
+	</data>
+</openerp>

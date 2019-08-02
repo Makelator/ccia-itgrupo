@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_precio_unitario_sp_admin,access.precio.unitario.sp.admin,model_stock_picking,precio_unitario_sp_admin_group,1,0,0,0
+access_precio_unitario_sp_user,access.precio.unitario.sp.user,model_stock_picking,precio_unitario_sp_usuario_group,1,0,0,0

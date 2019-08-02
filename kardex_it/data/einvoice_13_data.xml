@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- TIPO DE OPERACIÓN -->
+        01  
+02  
+03  
+04  
+05  
+06  
+07  
+08  
+09  
+10  
+11  
+12  
+13  
+14  
+15  
+99  OTROS (ESPECIFICAR)
+
+
+        <record id="einvoice13_01" model="einvoice.catalog.13">
+            <field name="name">KILOGRAMOS</field>
+            <field name="code">01</field>
+        </record>
+
+        <record id="einvoice13_02" model="einvoice.catalog.13">
+            <field name="name">LIBRAS</field>
+            <field name="code">02</field>
+        </record>
+
+        <record id="einvoice13_03" model="einvoice.catalog.13">
+            <field name="name">TONELADAS LARGAS</field>
+            <field name="code">03</field>
+        </record>
+
+        <record id="einvoice13_04" model="einvoice.catalog.13">
+            <field name="name">TONELADAS MÉTRICAS</field>
+            <field name="code">04</field>
+        </record>
+
+        <record id="einvoice13_05" model="einvoice.catalog.13">
+            <field name="name">TONELADAS CORTAS</field>
+            <field name="code">05</field>
+        </record>
+
+        <record id="einvoice13_06" model="einvoice.catalog.13">
+            <field name="name">GRAMOS</field>
+            <field name="code">06</field>
+        </record>
+
+        <record id="einvoice13_07" model="einvoice.catalog.13">
+            <field name="name">UNIDADES</field>
+            <field name="code">07</field>
+        </record>
+
+        <record id="einvoice13_08" model="einvoice.catalog.13">
+            <field name="name">LITROS</field>
+            <field name="code">08</field>
+        </record>
+
+        <record id="einvoice13_09" model="einvoice.catalog.13">
+            <field name="name">GALONES</field>
+            <field name="code">09</field>
+        </record>
+
+        <record id="einvoice13_10" model="einvoice.catalog.13">
+            <field name="name">BARRILES</field>
+            <field name="code">10</field>
+        </record>
+
+        <record id="einvoice13_11" model="einvoice.catalog.13">
+            <field name="name">LATAS</field>
+            <field name="code">11</field>
+        </record>
+
+        <record id="einvoice13_12" model="einvoice.catalog.13">
+            <field name="name">CAJAS</field>
+            <field name="code">12</field>
+        </record>
+
+        <record id="einvoice13_13" model="einvoice.catalog.13">
+            <field name="name">MILLARES</field>
+            <field name="code">13</field>
+        </record>
+
+        <record id="einvoice13_14" model="einvoice.catalog.13">
+            <field name="name">METROS CÚBICOS</field>
+            <field name="code">14</field>
+        </record> 
+
+        <record id="einvoice13_15" model="einvoice.catalog.13">
+            <field name="name">METROS</field>
+            <field name="code">15</field>
+        </record> 
+
+        <record id="einvoice13_99" model="einvoice.catalog.13">
+            <field name="name">OTROS (ESPECIFICAR)</field>
+            <field name="code">99</field>
+        </record>
+    </data>
+</odoo>

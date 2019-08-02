@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Part of Odoo Module Developed by 73lines
+    See LICENSE file for full copyright and licensing details.
+-->
+<odoo>
+
+    <!-- Sub Menu Templates -->
+    <template id="submenu_mega" name="Sub Menu Mega">
+        <t t-if="submenu.is_mega_menu">
+            <li t-if="not submenu.child_id"
+                t-att-class="'dropdown' if submenu.url and submenu.url != '/' and request.httprequest.path == submenu.url.replace('/page/website.', '/page/') else 'dropdown'">
+                <a t-att-href="(website.menu_id.child_id[0] == submenu) and '/' or submenu.url"
+                   class="dropdown-toggle" data-toggle="dropdown" t-ignore="true" t-att-target="'_blank' if submenu.new_window else None">
+                    <span t-field="submenu.name" />
+                    <span class="caret" />
+                </a>
+                <t t-if="submenu.submenu_view">
+                    <ul class="dropdown-menu" role="menu">
+                        <div class="yamm-content" t-field="submenu.submenu_view" />
+                    </ul>
+                </t>
+            </li>
+        </t>
+        <t t-if="not submenu.is_mega_menu">
+            <li t-if="not submenu.child_id" t-att-class="
+                'active' if submenu.url and submenu.url != '/' and request.httprequest.path == submenu.url.replace('/page/website.', '/page/') else None
+                ">
+                <a t-att-href="(website.menu_id.child_id[0] == submenu) and '/' or submenu.url" t-ignore="true" t-att-target="'_blank' if submenu.new_window else None">
+                    <span t-field="submenu.name"/>
+                </a>
+            </li>
+            <li t-if="submenu.child_id" t-attf-class="dropdown #{
+                (submenu.url and submenu.url != '/' and any([request.httprequest.path == child.url.replace('/page/website.', '/page/') for child in submenu.child_id if child.url]) or
+                 (submenu.url and request.httprequest.path == submenu.url.replace('/page/website.', '/page/'))) and 'active'
+                }">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span t-field="submenu.name"/> <span class="caret" t-ignore="true"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu" style="right: auto;">
+                    <t t-foreach="submenu.child_id" t-as="submenu">
+                        <t t-call="website.submenu"/>
+                    </t>
+                </ul>
+            </li>
+        </t>
+    </template>
+
+    <!-- Navabar Inherit -->
+    <template id="navbar_mega" inherit_id="website.layout" name="Navbar Megmenu">
+        <xpath expr="//div[@id='wrapwrap']/header/div[contains(@class, 'navbar navbar-default navbar-static-top')]"
+               position="attributes">
+            <attribute name="class">navbar navbar-default navbar-static-top yamm</attribute>
+        </xpath>
+        <xpath expr="//div[@class='collapse navbar-collapse navbar-top-collapse']/ul/t[@t-foreach='website.menu_id.child_id']/t[@t-call='website.submenu']"
+               position="replace">
+            <t t-call="website_mega_menu_73lines.submenu_mega" />
+        </xpath>
+    </template>
+
+    <!-- Template to edit the Banner template with the website editor -->
+    <template id="menu_template" name="Menu Template">
+        <t t-call="website.layout">
+            <body data-spy="scroll" data-target=".navspy" data-offset="50">
+                <div class="container">
+                    <div class="row mt16">
+                        <div class="col-md-9">
+                            <div id="template_introduction" t-field="template.submenu_view"
+                                class="oe_no_empty" />
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </t>
+    </template>
+
+</odoo>

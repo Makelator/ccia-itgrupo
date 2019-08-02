@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_costo_venta_it_tree" model="ir.ui.view">
+            <field name="name">view.costo.venta.it.tree</field>
+            <field name="model">view.costo.venta.it</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Costo de Venta" create="false" delete="false">
+                    <field name="almacen" />
+                    <field name="producto" />
+                    <field name="salidas" />
+                    <field name="devoluciones" />
+                    <field name="costo_ventas" />
+                    <field name="cuenta_salida"  />
+                    <field name="cuenta_valuacion"  />
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

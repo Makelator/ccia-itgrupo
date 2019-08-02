@@ -1,0 +1,141 @@
+<odoo>
+  <data>
+
+    <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+               <field name="partner_id" position="after">
+                    <field name="einvoice_12" />
+                    <field name="fecha_kardex" required="1" />
+                    <field name="invoice_id" />
+                    <field name="state_invoice" invisible="1"/>
+                    <field name="es_fecha_kardex" />
+               </field>
+
+               <field name="min_date" position="replace">
+                    <field name="min_date" invisible="1"/>
+               </field>
+
+               <xpath expr="//form/sheet/notebook" position="inside">
+
+                  <page string="Transportista" name="transporter">
+                    <group>
+                        <group>
+                          <field name="marca" />
+                          <field name="placa" />
+                          <field name="nro_const" />
+                          <field name="licencia" />
+                          <field name="nombre" />
+                          <field name="ruc" />
+                        </group>
+                        <group>
+                          <field name="tipo" />
+                          <field name="nro_comp" />
+                          <field name="nro_guia" />
+                          <field name="fecha_traslado" />
+                          <field name="punto_partida" />
+                          <field name="punto_llegada" />
+                        </group>
+                    </group>
+
+                  </page>
+
+               </xpath>
+
+
+            </field>
+    </record>
+
+
+
+    <record model="ir.ui.view" id="account_gastos_vinculados_distribucion_form2334">
+      <field name="name">gastos.vinculados.distribucion.form</field>
+      <field name="model">gastos.vinculados.distribucion</field>
+      <field name="arch" type="xml">
+        <form string="Gastos Vinculados" >                    
+                    <header>
+                        <button name="prorratear" type="object" states="draft" string="Prorratear" class="oe_highlight"/>
+                        <button name="agregar_lineas" type="object" states="draft" string="Insertar Movimientos" class="oe_highlight"/>
+                        <button name="finish" type="object" states="draft" string="Finalizar" class="oe_highlight"/>
+                        <button name="cancel" states="done" string="Volver Borrador" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"  readonly="1"/>
+                    </header>
+          <sheet>
+            <h1>
+              <field name="name" readonly="1"/>
+            </h1>
+            <group>
+              <group>
+                <field name="fecha" attrs="{'readonly':[('state','=','done')]}" required="1"/>
+                <field name="proveedor" required="1" attrs="{'readonly':[('state','=','done')]}" />
+                <field name="picking" required="0" attrs="{'readonly':[('state','=','done')]}" />
+              </group>
+              <group>
+                <field name="guia_remision" required="1" attrs="{'readonly':[('state','=','done')]}" />
+                <field name="monto" required="1" attrs="{'readonly':[('state','=','done')]}" />
+              </group>
+            </group>
+            <notebook>
+              <page string="Detalle">
+                <field name="detalle" attrs="{'readonly':[('state','=','done')]}" >
+                  <tree editable="bottom">
+                    <field name="move_id" required="1"/>
+                    <field name="albaran" required="1"/>
+                    <field name="origen" required="1"/>
+                    <field name="destino" required="1"/>
+                    <field name="cantidad" required="1"/>
+                    <field name="unidad" required="1"/>
+                    <field name="monto" readonly="1"/>
+                    <field name="tipo" required="0"/>
+                    <field name="nro_comprobante" required="0"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+        <record id="gastos_vinculados_tree_distribucion_tree" model="ir.ui.view">
+            <field name="name">gastos.vinculados.distribucion.tree</field>
+            <field name="model">gastos.vinculados.distribucion</field>
+            <field name="arch" type="xml">
+                <tree string="Gastos Vinculados">
+                    <field name="name"/>
+                    <field name="fecha"/>
+                    <field name="proveedor"/>
+                    <field name="guia_remision"/>
+                    <field name="monto"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="gastos_vinculados_distribucion_form" model="ir.actions.act_window">
+            <field name="name">Gastos Vinculados</field>
+            <field name="res_model">gastos.vinculados.distribucion</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="gastos_vinculados_distribucion_form" id="menu_gastos_vinculados_distribucion_form" parent="account.menu_finance_payables" sequence="1"/>
+
+
+        <record id="vpicktree" model="ir.ui.view">
+        <field name="name">stock.picking.tree</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <field name="origin" position="before">
+                <field name="invoice_id" />
+                <field name="state_invoice" />
+            </field>
+        </field>
+    </record>
+
+  </data>
+</odoo>

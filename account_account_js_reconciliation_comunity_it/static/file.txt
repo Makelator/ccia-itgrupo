@@ -1,0 +1,4 @@
+
+		select  'UPDATE ' || table_name || ' set ' || column_name || ' = ' || column_name || ' - interval ''5 hours'';'
+		FROM INFORMATION_SCHEMA.COLUMNS
+		WHERE (DATA_TYPE LIKE '%timestamp%' OR DATA_TYPE LIKE '%datetime%') and table_schema not in ('pg_catalog','information_schema')
