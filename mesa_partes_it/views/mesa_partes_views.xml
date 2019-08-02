@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+        <record model="ir.ui.view" id="mesa_partes_view">
+            <field name="name">mesa.partes.form</field>
+            <field name="model">mesa.partes</field>
+            <field name="arch" type="xml">
+                <form string="Mesa de Partes">
+                    <header>                     
+                        <button string="Revisado" states='recibido' name= "revisar_button" type = "object" class="oe_highlight"/>            
+                        <field name="state"  widget="statusbar" statusbar_visible="recibido,revisado"  readonly="1"/>
+                    </header>
+
+                    <sheet>
+                        <h1>
+                            <field name="id" string='ID' readonly="1" />
+                        </h1>
+                                 
+                        <group >
+                            <group>
+                              
+                                <field name="nro_registro" />
+                                <field name="tipo_documento"/>
+                                <field name="remitente" />
+                                <field name="destinatario"/>
+                               
+
+                            </group >
+
+                            <group>
+                                <field name="archivo"/>
+                                <field name="fecha"/>      
+                            </group>
+
+                        </group>
+                        <group>
+                            <field name="descripcion" groups="mesa_partes_it.mesa_partes_admin_group"/>
+                            <field name="observaciones" groups="mesa_partes_it.mesa_partes_admin_group"/>
+                        </group>
+   
+                     </sheet>
+                     <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+       
+        <record model="ir.ui.view" id="mesa_partes_tree">
+            <field name="name">mesa.partes.tree</field>
+            <field name="model">mesa.partes</field>
+            <field name="arch" type="xml">
+                <tree string="Mesa de Partes">
+                        <field name="id" string='ID'/>
+                        <field name="nro_registro"/>
+                        <field name="remitente" />
+                        <field name="destinatario"/>
+                        <field name="descripcion"/>
+                        <field name="tipo_documento"/>
+                        
+                        <field name="observaciones"/>
+                        <field name="archivo"/>
+                        <field name="state"/>
+                        <field name="fecha"/>  
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="mesa_partes_view_search" model="ir.ui.view">
+            <field name="name">Mesa de Partes - Busqueda</field>
+            <field name="model">mesa.partes</field>
+            <field name="arch" type="xml">
+                <search string="Mesa de Partes">
+                    <field name="nro_registro" />
+                    <field name="state" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="mesa_partes_action"> 
+            <field name="name">Mesa de Partes</field>
+            <field name="res_model">mesa.partes</field>
+            <field name="view_type">form</field>
+            <field name="context">{}</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="mesa_partes_view_search"/>
+        </record>
+
+
+        <menuitem   id="mesa_partes_menu"
+                    web_icon="mesa_partes_it,static/description/icon.png" 
+                    name="Mesa de Partes"
+                    sequence="1000"/>
+
+
+
+        <menuitem   id="mesa_partes_sub_menu"
+                    name="Mesa de Partes" 
+                    parent="mesa_partes_menu"   
+                    action= "mesa_partes_action"
+                    sequence="1"/>
+
+    
+               
+  </data>
+</odoo>

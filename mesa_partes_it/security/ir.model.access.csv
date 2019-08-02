@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mesa_partes_admin,access.mesa.partes.admin,model_mesa_partes,mesa_partes_it.mesa_partes_admin_group,1,0,0,0
+access_mesa_partes_usuario,access.mesa.partes.usuario,model_mesa_partes,mesa_partes_it.mesa_partes_usuario_group,1,0,0,0
+access_mesa_tipodoc_usuario,access.mesa.tipodoc.usuario,model_tipo_documento_mesa,mesa_partes_it.mesa_partes_usuario_group,1,0,0,0
