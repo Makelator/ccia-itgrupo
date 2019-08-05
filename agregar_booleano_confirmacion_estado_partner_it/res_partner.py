@@ -13,4 +13,4 @@ import codecs
 class ResPartner(models.Model):
 	_inherit = 'res.partner'
 
-	confirmacion_estado = fields.Boolean(string='Confirmacion Estado',default=False)
+	confirmacion_estado = fields.Boolean(string='¿Cambiar Estado de Asociado?',default=False)
