@@ -9,7 +9,7 @@
       <field name="inherit_id" ref="base.view_partner_form"/>
       <field name="arch" type="xml">
         <field name="phone" position="before">
-          <field name="confirmacion_estado" groups="agregar_booleano_confirmacion_estado_partner_it.asociados_estado_admin_group"/>
+          <field name="confirmacion_estado" string="¿Cambiar Estado del Asociado?" groups="agregar_booleano_confirmacion_estado_partner_it.asociados_estado_admin_group"/>
         </field>
 
 
