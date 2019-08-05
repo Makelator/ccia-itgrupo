@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+
+
+        <record model="ir.ui.view" id="partner_afiliado_view">
+            <field name="name">partner.afiliado.form</field>
+            <field name="model">partner.afiliado</field>
+            <field name="arch" type="xml">
+                <form string="Orden de Trabajo">
+                    <sheet>
+                        <group>
+                                                                    
+                            <field name="partner_id" redonly='1'/>
+                            <field name="estado_anterior" redonly='1'/>
+                            <field name="estado_afiliacion" redonly='1'/>
+                            <field name="fecha_cambio" redonly='1'/>
+                                
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+       
+        <record model="ir.ui.view" id="partner_afiliado_tree">
+            <field name="name">partner.afiliado.tree</field>
+            <field name="model">partner.afiliado</field>
+            <field name="arch" type="xml">
+                <tree string="Socios" default_order="fecha_cambio">
+                    <field name="partner_id" />
+                    <field name="estado_anterior" redonly='1'/>
+                    <field name="estado_afiliacion" />
+                    <field name="fecha_cambio"/> 
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="partner_afiliado_view_search" model="ir.ui.view">
+            <field name="name">Socios - Busqueda</field>
+            <field name="model">partner.afiliado</field>
+            <field name="arch" type="xml">
+                <search string="Informes de Garantia">
+                    <field name="partner_id" />
+                    <field name="estado_anterior"/>
+                    <field name="estado_afiliacion" />
+                    <field name="fecha_cambio"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="partner_afiliado_action"> 
+            <field name="name">Socios</field>
+            <field name="res_model">partner.afiliado</field>
+            <field name="view_type">form</field>
+            <field name="context">{}</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="partner_afiliado_view_search"/>
+        </record>
+
+        <menuitem   id="socios_menu" 
+                    name="Socios" 
+                    sequence="999"/>    
+
+        <menuitem   id="socios_submenu" 
+                    name="Socios"
+                    parent="socios_menu"
+                    sequence="1"/>
+
+
+
+        <menuitem   id="socios_por_afiliarse_menu"
+                    name="Socios por Afiliarse" 
+                    parent="socios_submenu" 
+                    action= "partner_afiliado_action"
+                    sequence="1"/>
+
+    
+               
+  </data>
+</odoo>

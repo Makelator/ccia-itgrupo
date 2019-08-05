@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="main_parameters_view_inherit" model="ir.ui.view">
+      <field name="name">main.parameters.view.inherit</field>
+      <field name="model">main.parameter</field>
+      <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+      <field name="arch" type="xml">
+        
+       
+
+          <xpath expr="//notebook" position="inside">
+                  <page string="Limites - Facturas">
+                    <group>
+                        <field name="equipo_ventas_lim_fac" />
+                        <field name="limite_facturas"/>
+                    </group>                 
+                  </page>
+            </xpath>
+
+
+      </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

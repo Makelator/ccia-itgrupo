@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="res_partner_inherit_2" model="ir.ui.view">
+      <field name="name">res.partner.inherit.2</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+
+        <button name="toggle_active" position="after">
+                      <button type="object"
+                          name="action_view_asociados"
+                          class="oe_stat_button"
+                          icon="fa-chain"
+                          attrs="{'invisible': [('asociados_count', '=', 0)]}" groups="base.group_user">
+                          <field name="asociados_count" widget="statinfo" string="Cambios de Estado"/>
+                      </button>
+        </button>
+
+      <field name="estado_afiliacion" position="replace">
+          <field name="estado_afiliacion" attrs="{'readonly': [('confirmacion_estado', '=', False)]}"/>
+        </field>
+
+
+      </field>
+
+
+
+
+    </record>
+
+</data>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="event_event_inherit_group" model="ir.ui.view">
+      <field name="name">event.event.inherit.group</field>
+      <field name="model">event.event</field>
+      <field name="inherit_id" ref="event.view_event_form"/>
+      <field name="arch" type="xml">
+      <xpath expr="//button[@name='toggle_active']" position="before">
+                      <button type="object"
+                            name="action_view_sale_order"
+                            class="oe_stat_button"
+                            icon="fa-usd"
+                            attrs="{'invisible': [('sale_order_count', '=', 0)]}" groups="base.group_user">
+                            <field name="sale_order_count" widget="statinfo" string="Cotizacion"/>
+                      </button>
+      </xpath>
+        <field name="date_tz" position="after">
+          <field name="partner_id" readonly="0"/>
+          <field name="contact"/>
+          <field name="contact_mail" readonly="1"/>
+          <field name="contact_phone" readonly="1"/>
+          <field name="contact_mobile" readonly="1"/>
+          
+        </field>
+
+        <xpath expr="//sheet/notebook" position="inside">
+                  <page string="Datos Adicionales">
+                    <group>
+                      <field name="equipos_evento"/>
+                      <field name="arreglo_evento"/>
+                      <field name="observaciones_event"/>
+                    </group>
+                  </page>
+        </xpath>
+      </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

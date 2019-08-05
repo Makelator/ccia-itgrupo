@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="account_invoice_inherit" model="ir.ui.view">
+      <field name="name">account.invoice.inherit</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_form"/>
+      <field name="arch" type="xml">
+        
+        <button name="action_invoice_open" states="draft" position="replace">
+            <button name="account_invoice_open_2" type="object" states="draft" string="Validar" class="oe_highlight" groups="account.group_account_invoice"/>
+        </button>
+      
+      </field>
+    </record>
+
+    
+
+</data>
+</odoo>

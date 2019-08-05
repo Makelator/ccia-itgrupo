@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="res_partner_inherit_1" model="ir.ui.view">
+      <field name="name">res.partner.inherit.1</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <field name="phone" position="before">
+          <field name="estado_afiliacion"/>
+        </field>
+
+
+
+      </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

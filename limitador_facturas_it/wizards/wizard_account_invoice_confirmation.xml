@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_account_invoice_limit_confirmation" model="ir.ui.view">
+        <field name="name">account.invoice.limit.confirmation.view.form</field>
+        <field name="model">account.invoice.limit.confirmation</field>
+        <field name="arch" type="xml">
+            <form string="¿VALIDAR Orden de Trabajo?">
+                <group>
+                    <p>
+                        ¿EL NUMERO DE FACTURAS ABIERTAS CON ESE CLIENTE Y ESE EQUIPO DE VENTAS HA EXCEDIDO
+                        EL LIMITE ESTABLECIDO EN LOS PARAMETROS. ¿DESEA CONTINUAR?
+                    </p>
+                </group>
+                <footer>
+                    <button name="process" string="_Aplicar" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
