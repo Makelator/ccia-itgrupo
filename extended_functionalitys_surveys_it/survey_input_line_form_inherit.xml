@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="survey_user_input_form_inherit">
+            <field name="name">survey_user_input_form.inherit</field>
+            <field name="model">survey.user_input</field>
+            <field name="inherit_id" ref="survey.survey_user_input_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//form/  sheet/field[@name='user_input_line_ids']/tree/field[@name='date_create']" position="after">
+                  <field name="value_attachment" widget="binary" attrs="{'invisible': [('answer_type','!=','attachment')]}"/>
+              </xpath>
+
+            </field>
+        </record>
+
+    
+
+</data>
+</odoo>

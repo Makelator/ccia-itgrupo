@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <template id="survey.result">
+        <t t-call="website.layout">
+            <div class="oe_structure" />
+            <div class="container js_surveyresult">
+                <t t-call="survey.back" />
+                <div class="jumbotron mt32">
+                    <h1><span t-field="survey.title" /> <span style="font-size:1.5em;" class="fa fa-bar-chart-o pull-right "/></h1>
+                    <div t-field="survey.description" class="oe_no_empty" />
+                </div>
+                <div class="panel panel-default hidden-print">
+                    <div class="panel-heading"><span class="fa fa-filter"></span>  Filters <span t-if="filter_display_data" class="pull-right text-primary clear_survey_filter"><i class="fa fa-times"></i> Clear All Filters</span></div>
+                    <div class="panel-body">
+                        <span t-if="filter_finish == True">
+                            <span class="label label-default only_left_radius filter-all">All surveys</span><span class="label label-primary only_right_radius filter-finished">Finished surveys</span>
+                        </span>
+                        <span t-if="filter_finish == False">
+                            <span class="label label-primary only_left_radius filter-all">All surveys</span><span class="label label-default only_right_radius filter-finished">Finished surveys</span>
+                        </span>
+                        <span t-foreach="filter_display_data" t-as="filter_data">
+                            <span class="label label-primary only_left_radius"><i class="fa fa-filter"></i></span><span class="label label-primary no_radius" t-esc="filter_data['question_text']"></span><span class="label label-success only_right_radius" t-esc="' > '.join(filter_data['labels'])"></span>
+                        </span>
+                    </div>
+                </div>
+                <div t-foreach="survey_dict['page_ids']" t-as='page_ids'>
+                    <t t-set="page" t-value="page_ids['page']"/>
+                    <h1 class="mt16" t-field='page.title'></h1>
+                    <div t-field="page.description" class="oe_no_empty" />
+                    <hr/>
+                    <div t-foreach="page_ids['question_ids']" t-as='question_ids' class="mt16">
+                        <t t-set="input_summary" t-value="question_ids['input_summary']"/>
+                        <t t-set="question" t-value="question_ids['question']"/>
+                        <t t-set="graph_data" t-value="question_ids['graph_data']"/>
+                        <t t-set="prepare_result" t-value="question_ids['prepare_result']"/>
+                        <h4>
+                            <b>Question </b>
+                            <span t-field='question.question'></span>
+                            <t t-if="question.type == 'matrix'">
+                                <small><span class="label label-default">Matrix: <span t-field='question.matrix_subtype'/></span></small>
+                            </t>
+                            <t t-if="question.type in ['simple_choice', 'multiple_choice']">
+                                <small><span t-field='question.type' class="label label-default"></span></small>
+                            </t>
+                            <span class="pull-right">
+                                <span class="label label-success"><span t-esc="input_summary['answered']"></span> Answered</span>
+                                <span class="label label-danger"><span t-esc="input_summary['skipped']"></span> Skipped</span>
+                            </span>
+                        </h4>
+                        <t t-if="input_summary['answered'] != 0">
+                            <t t-if="question.description">
+                                <div class="text-muted oe_no_empty" t-field="question.description" />
+                            </t>
+                            <t t-if="question.type in ['textbox', 'free_text', 'datetime','attachment']">
+                                <t t-call="survey.result_text"></t>
+                            </t>
+                            <t t-if="question.type in ['simple_choice', 'multiple_choice']">
+                                <t t-call="survey.result_choice"></t>
+                            </t>
+                            <t t-if="question.type == 'matrix'">
+                                <t t-call="survey.result_matrix"></t>
+                            </t>
+                            <t t-if="question.type == 'numerical_box'">
+                                <t t-call="survey.result_number"></t>
+                            </t>
+                        </t>
+                        <t t-if="input_summary['answered'] == 0">
+                            <h2 style="padding-top:30px;padding-bottom:30px;text-align:center;" class="text-muted">Sorry, No one answered this question.</h2>
+                        </t>
+                    </div>
+                </div>
+            </div>
+            <div class="oe_structure" />
+        </t>
+    </template>
+
+    <!-- Result for free_text,textbox and datetime -->
+    <template id="survey.result_text">
+        <table class="table table-hover table-condensed" t-att-id="'table_question_%d' % question.id">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User Responses</th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-set="text_result" t-value="prepare_result"/>
+                <tr t-foreach="text_result" t-as="user_input">
+                    <td><a t-att-href="'%s/%s' % (user_input.user_input_id.print_url, user_input.user_input_id.token)"><t t-esc="user_input_index + 1"></t></a></td>
+                    <t t-if="question.type == 'free_text'">
+                        <td>
+                            <a t-att-href="'%s/%s' % (user_input.user_input_id.print_url, user_input.user_input_id.token)" t-field="user_input.value_free_text"></a><br/>
+                        </td>
+                    </t>
+                    <t t-if="question.type == 'textbox'">
+                        <td>
+                            <a t-att-href="'%s/%s' % (user_input.user_input_id.print_url, user_input.user_input_id.token)" t-field="user_input.value_text"></a><br/>
+                        </td>
+                    </t>
+                    <t t-if="question.type == 'datetime'">
+                        <td>
+                            <a t-att-href="'%s/%s' % (user_input.user_input_id.print_url, user_input.user_input_id.token)" class="oe_date" t-field="user_input.value_date"></a><br/>
+                        </td>
+                    </t>
+                     <t t-if="question.type == 'attachment'">
+                        <td>
+                            <a t-att-href="'%s/%s' % (user_input.user_input_id.print_url, user_input.user_input_id.token)" t-field="user_input.value_attachment"></a><br/>
+                        </td>
+                    </t>
+                </tr>
+            </tbody>
+        </table>
+        <t t-call="survey.pagination" />
+    </template>
+   
+
+    <!-- Result for matrix -->
+  
+
+   
+</data>
+</odoo>
