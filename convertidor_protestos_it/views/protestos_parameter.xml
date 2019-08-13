@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <template id="hello">
+            <ul>
+                <li t-foreach="name" t-as="letter">
+                    <t t-esc="letter_index"/>: <t t-esc="letter"/>
+                </li>
+            </ul>
+        </template>
+
+        <record id="convertidor_parameters_form" model="ir.ui.view">
+            <field name="name">convertidor.parameters.form</field>
+            <field name="model">convertidor.parameters</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+				<form string="Protestos y Moras Parametros" version="8.0" create="false" delete="false">
+                    <notebook>
+                        <page string="Rutas de Descarga">
+        					<group string="Configuración">
+        						<field name="download_directory"/>
+                                <field name="download_url"/>
+                            </group>
+                        </page>
+
+                    </notebook>
+				</form>
+            </field>
+        </record>
+
+		<record id="convertidor_parameters_tree" model="ir.ui.view">
+            <field name="name">convertidor.parameters.tree</field>
+            <field name="model">convertidor.parameters</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Protestos y Moras Parametros" create="false" delete="false">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+		
+		<record id="action_convertidor_parameters" model="ir.actions.act_window">
+            <field name="name">Protestos Parametros</field>
+            <field name="res_model">convertidor.parameters</field>
+            <field name="view_id" ref="convertidor_parameters_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="sequence" eval="1"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!-- <field name="search_view_id" ref="account_move_line_book_search"/> -->
+        </record>
+
+        
+		
+		<menuitem   id="protestos_parametros_menu"
+                    name="Protestos Parametros" 
+                    parent="convertidor_protestos_it.configuracion_protestos_sub_menu"   
+                    action= "action_convertidor_parameters"
+                    sequence="1"/>
+
+	</data>
+</openerp>

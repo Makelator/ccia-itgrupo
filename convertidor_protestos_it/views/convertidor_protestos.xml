@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="convertidor_protestos_form" model="ir.ui.view">
+            <field name="name">convertidor.protestos.form</field>
+            <field name="model">convertidor.protestos</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Convertidor de Protestos y Moras" version="7.0">
+                    <group string ="Archivo">
+                        <field name="excel_file" widget="binary"/>
+
+                    </group>
+                    <group string ="Botelin">
+                        <field name="numero_boletin"/>
+                        <field name="state"/>
+                    </group>
+                
+                <footer>
+                    <button name="do_oexcel" string="Convertir Protestos" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="convertidor_protestos_action" model="ir.actions.act_window">
+            <field name="name">Reporte Utilidad Operativa</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">convertidor.protestos</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="convertidor_protestos_form"/>
+            <field name="target">new</field>
+            <field name="context">'form_view_ref': 'convertidor_protestos_form'</field>
+        </record>
+
+        <menuitem   id="protestos_menu"
+                    web_icon="convertidor_protestos_it,static/description/icon.png" 
+                    name="Protestos y Moras"
+                    sequence="1001"/>
+
+        <menuitem   id="protestos_sub_menu"
+                    name="Protestos Y Moras" 
+                    parent="convertidor_protestos_it.protestos_menu"   
+                    sequence="1"/>
+
+        <menuitem   id="configuracion_protestos_sub_menu"
+                    name="Configuración" 
+                    parent="convertidor_protestos_it.protestos_menu"   
+                    sequence="2"/>
+
+        <menuitem   id="convertidor_protestos_menu"
+                    name="Convertidor de Protestos Moras" 
+                    parent="convertidor_protestos_it.protestos_sub_menu"   
+                    action= "convertidor_protestos_action"
+                    sequence="1"/>
+
+
+
+    </data>
+</odoo>

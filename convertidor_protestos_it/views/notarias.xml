@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="notarias_modelo_form" model="ir.ui.view">
+            <field name="name">notarias.modelo.form</field>
+            <field name="model">notarias.modelo</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+				<form string="Notarias" version="8.0">
+
+        					<group string="Datos">
+        						<field name="name" />
+                                <field name="codigo" />
+                            </group>
+
+				</form>
+            </field>
+        </record>
+
+		<record id="notarias_modelo_tree" model="ir.ui.view">
+            <field name="name">notarias.modelo.tree</field>
+            <field name="model">notarias.modelo</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+               
+                <tree string="Notarias" editable='bottom'>
+                    <field name="name" />
+                    <field name="codigo" />
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="notarias_modelo_view_search" model="ir.ui.view">
+            <field name="name">Notarias - Busqueda</field>
+            <field name="model">notarias.modelo</field>
+            <field name="arch" type="xml">
+                <search string="Notarias">
+                    <field name="name" />
+                    <field name="codigo"/>
+
+                </search>
+            </field>
+        </record>
+
+		
+		<record id="action_notarias_modelo" model="ir.actions.act_window">
+            <field name="name">Notarias</field>
+            <field name="res_model">notarias.modelo</field>
+            <field name="view_id" ref="notarias_modelo_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="sequence" eval="1"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="notarias_modelo_view_search"/>
+            <!-- <field name="search_view_id" ref="account_move_line_book_search"/> -->
+        </record>
+
+        
+		
+		<menuitem   id="notarias_modelo_menu"
+                    name="Notarias" 
+                    parent="convertidor_protestos_it.configuracion_protestos_sub_menu"   
+                    action= "action_notarias_modelo"
+                    sequence="1"/>
+
+	</data>
+</openerp>
