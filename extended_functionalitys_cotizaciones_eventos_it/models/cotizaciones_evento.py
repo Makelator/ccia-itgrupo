@@ -15,12 +15,14 @@ import datetime
 
 
 class sale_order_inherit(models.Model):
-	_inherit = 'sale.order'
-	event_id = fields.Many2one('event.event','Evento')
-	event_id_count = fields.Integer(string='Eventos', compute='_compute_eventos_ids')
-	event_name = fields.Char(string='Nombre del Evento')
+	_inherit = 'sale.order.line'
 	evento_start_date = fields.Datetime(string='Fecha Inicio del Evento')
 	evento_end_date = fields.Datetime(string='Fecha Final del Evento')
+
+class sale_order_inherit(models.Model):
+	_inherit = 'sale.order'
+	event_id = fields.One2many('event.event','sale_order_id','Evento')
+	event_id_count = fields.Integer(string='Eventos', compute='_compute_eventos_ids')
 
 	@api.multi
 	@api.depends('event_id')
@@ -34,7 +36,7 @@ class sale_order_inherit(models.Model):
 		esta funcion abre un tree si es que hay mas de un elemento
 		y si solo hay uno abre el form con el elemento vinculado
 		'''
-		action = self.env.ref('event.action_event_view').read()[0]
+		action = self.env.ref('extended_functionalitys_cotizaciones_eventos_it.view_event_2_action').read()[0]
 
 		pickings = self.mapped('event_id')
 		if len(pickings) > 1:
@@ -47,23 +49,31 @@ class sale_order_inherit(models.Model):
 	@api.multi
 	def action_confirm(self):
 		t = super(sale_order_inherit,self).action_confirm()
-		if self.event_name and self.evento_start_date and self.evento_end_date:
-			if not self.event_id:
-				print('entro a order')
-				fecha_inicial = self.evento_start_date
-				fecha_end = self.evento_end_date
-				name_event= self.event_name
-				cotizacion = self.id
-				vals = {
-					'partner_id':self.partner_id.id,
-					'name':name_event,
-					'date_begin':fecha_inicial,
-					'date_end':fecha_end,
-					'sale_order_id':self.id,
-				}
-				wizard = self.env['event.event'].create(vals)
-				self.event_id=wizard.id
-
+		for lineas_cot in self.order_line:
+			if lineas_cot.product_id.type == "service":
+				self.env.cr.execute("""
+					select id from res_partner where product_service = """+str(lineas_cot.product_id.id)+"""
+					"""
+					)
+				notarias = list(self.env.cr.dictfetchall())
+				if len(notarias)>0:
+					if lineas_cot.evento_start_date and lineas_cot.evento_end_date:
+						print('entro a order')
+						fecha_inicial = lineas_cot.evento_start_date
+						fecha_end = lineas_cot.evento_end_date
+						name_event= lineas_cot.name
+						cotizacion = self.id
+						vals = {
+							'address_id':int(notarias[0]['id']),
+							'partner_id':self.partner_id.id,
+							'name':lineas_cot.name,
+							'date_begin':fecha_inicial,
+							'date_end':fecha_end,
+							'sale_order_id':self.id,
+						}
+						wizard = self.env['event.event'].create(vals)
+					else:
+						raise UserError("El Servicio ("+lineas_cot.product_id.name+") tiene una Ubicacion para Eventos asignada, debe llegar los campos de fecha inicial y fecha final del evento para su creacion")
 		return t
 
 

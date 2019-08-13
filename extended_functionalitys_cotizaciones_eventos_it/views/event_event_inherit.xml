@@ -38,6 +38,15 @@
       </field>
     </record>
 
+    <record id="view_event_2_action" model="ir.actions.act_window">
+       <field name="name">Eventos</field>
+       <field name="res_model">event.event</field>
+       <field name="view_ids" eval="[(5,0,0),(0, 0, {'view_mode': 'tree', 'view_id': ref('event.view_event_tree')}),(0, 0, {'view_mode': 'form', 'view_id': ref('event.view_event_form')})]"/>
+       <field name="view_type">form</field>
+       <field name="view_mode">tree,form</field>
+   </record>
+
+
     
 
   </data>
