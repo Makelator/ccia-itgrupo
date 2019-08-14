@@ -19,6 +19,7 @@ class MesaPartes(models.Model):
 	_rec_name='id'
 
 	name = fields.Char(string="nombre")
+	codigo_ref = fields.Char(string="Codigo")
 	remitente = fields.Char(string="Remitente")
 	state = fields.Selection([('recibido', 'Recibido'),
 								('revisado', 'Revisado')],
@@ -29,8 +30,30 @@ class MesaPartes(models.Model):
 	destinatario = fields.Char(string="Destinatario")
 	descripcion = fields.Text(string="Descripcion")
 	observaciones = fields.Text(string="Observaciones")
-	archivo = fields.Char(string="Archivo")
 	fecha = fields.Datetime(string="Fecha")
+
+
+	@api.model
+	def default_get(self, fields):
+		res = super(MesaPartes, self).default_get(fields)
+		fecha_hoy = str(datetime.datetime.now())[:10]
+		res.update({'fecha':fecha_hoy})
+		return res
+
+	@api.model
+	def create(self,vals):
+	# Override the original create function for the res.partner model
+		year=datetime.date.today().strftime("%Y")
+		current_year=str(year)
+		id_seq = self.env['ir.sequence'].search([('name','=','MesaPartes Seq '+current_year+'')])
+		if len(id_seq)>0:
+			id_seq = id_seq[0]
+		else:
+			id_seq = self.env['ir.sequence'].create({'name':'MesaPartes Seq '+current_year+'','implementation':'standard','active':True,'prefix':'00','padding':4,'number_increment':1,'number_next_actual' :0})
+		vals['codigo_ref'] = id_seq.next_by_id()
+		print(vals['codigo_ref'])
+		record = super(MesaPartes, self).create(vals)
+		return record
 
 	@api.multi
 	def revisar_button(self):

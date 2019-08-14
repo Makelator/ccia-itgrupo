@@ -15,6 +15,7 @@
             'security/user_groups.xml',
             'security/ir.model.access.csv',
             'views/mesa_partes_views.xml',
+            'views/tipo_documento_mesa.xml',
     ],
     'demo': [],
     'installable': True,

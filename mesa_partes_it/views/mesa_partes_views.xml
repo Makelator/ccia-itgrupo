@@ -13,23 +13,22 @@
 
                     <sheet>
                         <h1>
-                            <field name="id" string='ID' readonly="1" />
+                            <field name="codigo_ref" string='COD' readonly="1" />
                         </h1>
                                  
                         <group >
                             <group>
                               
                                 <field name="nro_registro" />
-                                <field name="tipo_documento"/>
-                                <field name="remitente" />
-                                <field name="destinatario"/>
+                                <field name="tipo_documento" required='1'/>
+                                <field name="remitente" required='1'/>
+                                <field name="destinatario" required='1'/>
                                
 
                             </group >
 
                             <group>
-                                <field name="archivo"/>
-                                <field name="fecha"/>      
+                                <field name="fecha" required='1'/>      
                             </group>
 
                         </group>
@@ -53,7 +52,7 @@
             <field name="model">mesa.partes</field>
             <field name="arch" type="xml">
                 <tree string="Mesa de Partes">
-                        <field name="id" string='ID'/>
+                        <field name="codigo_ref" string='COD'/>
                         <field name="nro_registro"/>
                         <field name="remitente" />
                         <field name="destinatario"/>
@@ -61,7 +60,6 @@
                         <field name="tipo_documento"/>
                         
                         <field name="observaciones"/>
-                        <field name="archivo"/>
                         <field name="state"/>
                         <field name="fecha"/>  
                 </tree>
