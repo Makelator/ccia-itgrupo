@@ -323,9 +323,6 @@ class convertidor_protestos(models.TransientModel):
 						# 	valor = (s.cell(row, col).value)
 						# 	print(valor)
 						# 	data_row.append(valor)
-		print(pepe)
-		#pepe2= pepe.replace('\xbe','A')
-		#ARMANDO EL TXT
 		direccion = self.env['convertidor.parameters'].search([])[0].download_url
 		with open(direccion + 'protestos_moras.txt','wb') as file:
 			pepe2 = pepe.encode('ascii','replace')
