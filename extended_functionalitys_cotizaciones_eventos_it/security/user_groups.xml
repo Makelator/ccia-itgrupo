@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+	    <record model="ir.module.category" id="cotizaciones_eventos">
+            <field name="name">Cotizaciones y Eventos</field>
+            <field name="description">....</field>
+    	</record>
+    	
+    	<record id="cot_even_admin_group" model="res.groups"> 
+            <field name="name">Acceso a Campos Extra en Cotizaciones para creacion de eventos</field>
+            <field name="category_id" ref="cotizaciones_eventos"/>
+        </record>
+    	
+
+    </data>
+</odoo>
+	

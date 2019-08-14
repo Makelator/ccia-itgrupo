@@ -24,8 +24,8 @@
 
         <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
 
-                      <field name="evento_start_date"/>
-                      <field name="evento_end_date"/>
+                      <field name="evento_start_date" groups='extended_functionalitys_cotizaciones_eventos_it.cot_even_admin_group'/>
+                      <field name="evento_end_date" groups='extended_functionalitys_cotizaciones_eventos_it.cot_even_admin_group'/>
 
         </xpath>
 

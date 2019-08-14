@@ -12,6 +12,7 @@
     'website': "http://www.itgrupo.net",
     'depends': ['event','sale','sale_order_contact','account','creacion_product_service_res_p'],
     'data': [
+            'security/user_groups.xml',
             'views/sale_order_inherit.xml',
             'views/event_event_inherit.xml',   
     ],
